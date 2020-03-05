@@ -14,10 +14,12 @@ namespace terr {
 		~Window();
 
 		bool IsOpen();
-		void Clear();
+		void Clear(float r = 0.0f, float g = 0.0f, float b = 0.0f);
 		void Display();
 
-	private:
+		static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+
+	public:
 		float width, height;
 		GLFWwindow* glfw_window;
 	};

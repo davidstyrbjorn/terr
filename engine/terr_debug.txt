@@ -1,0 +1,9 @@
+DEBUG LOG MESSAGE SENT FROM: class terr::Window
+Test error fuck fuck fuck
+=======================================
+DEBUG LOG MESSAGE SENT FROM: class terr::Window
+Test error 222 fuck fuck fuck
+=======================================
+DEBUG LOG MESSAGE SENT FROM: class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> >
+Fucking string class shat the bed
+=======================================

@@ -1,6 +1,7 @@
 #include"../include/window.h"
 
 #include<GLFW/glfw3.h>
+#include"../include/debug_log.h"
 
 terr::Window::Window(float _width, float _height, std::string _title) : width(_width), height(_height)
 {
@@ -14,12 +15,18 @@ terr::Window::Window(float _width, float _height, std::string _title) : width(_w
 
 	if (!glfw_window) {
 		glfwTerminate();
-		// @ WE PROBABLY WANT TO DO SOMETHING DEBUG LOG RELAYED HERE
+		terr::DebugLog<terr::Window>("Failed to initalize GLFW!");
 		return;
 	}
 
 	// Make the glfw window the current context so that OpenGL know's where we are renderig our shit
 	glfwMakeContextCurrent(glfw_window);
+
+	// Set some glfw callback functions!
+	glfwSetFramebufferSizeCallback(glfw_window, framebuffer_size_callback);
+
+	// Mainly so that we can get Window class in the callback functions!
+	glfwSetWindowUserPointer(glfw_window, this);
 }
 
 terr::Window::~Window()
@@ -33,10 +40,10 @@ bool terr::Window::IsOpen()
 	return !glfwWindowShouldClose(glfw_window);
 }
 
-void terr::Window::Clear() {
+void terr::Window::Clear(float r, float g, float b) {
 	// Clear the color and depth buffer 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(0.4f, 0.8f, 0.4f, 1.0f);
+	glClearColor(r, g, b, 1.0f);
 }
 
 void terr::Window::Display() {
@@ -45,4 +52,16 @@ void terr::Window::Display() {
 
 	// Poll events preparing for the next cycle
 	glfwPollEvents();
+}
+
+void terr::Window::framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	glViewport(0, 0, width, height);
+	
+	terr::Window* terr_window = static_cast<terr::Window*>(glfwGetWindowUserPointer(window));
+	
+	terr_window->width = width;
+	terr_window->height = height;
+
+	std::cout << width << ", " << height << std::endl;
 }
