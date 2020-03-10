@@ -1,7 +1,7 @@
-#include"../include/window.h"
+#include"../include/core/window.h"
 
 #include<GLFW/glfw3.h>
-#include"../include/debug_log.h"
+#include"../include/core/debug_log.h"
 
 terr::Window::Window(float _width, float _height, std::string _title) : width(_width), height(_height)
 {
@@ -15,7 +15,7 @@ terr::Window::Window(float _width, float _height, std::string _title) : width(_w
 
 	if (!glfw_window) {
 		glfwTerminate();
-		terr::DebugLog<terr::Window>("Failed to initalize GLFW!");
+		terr::DebugLog::Log<terr::Window>("Failed to initalize GLFW!");
 		return;
 	}
 
@@ -58,10 +58,8 @@ void terr::Window::framebuffer_size_callback(GLFWwindow* window, int width, int 
 {
 	glViewport(0, 0, width, height);
 	
-	terr::Window* terr_window = static_cast<terr::Window*>(glfwGetWindowUserPointer(window));
+	static terr::Window* terr_window = static_cast<terr::Window*>(glfwGetWindowUserPointer(window));
 	
 	terr_window->width = width;
 	terr_window->height = height;
-
-	std::cout << width << ", " << height << std::endl;
 }

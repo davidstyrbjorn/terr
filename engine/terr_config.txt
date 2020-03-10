@@ -1,0 +1,11 @@
+<terr>
+  <version>0.1</version>
+
+  <author>David Styrbjorn</author>
+  <author2>Emil Bertholdsson</author2>
+  <author3>Hugo Dahl</author3>
+
+  <windowWidth>800</windowWidth>
+  <windowHeight>600</windowHeight>
+
+</terr>
