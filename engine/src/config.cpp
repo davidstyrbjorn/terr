@@ -28,6 +28,10 @@ void terr::Config::ParseFromConfigFile()
 			lines.push_back(line);
 		}
 	} 
+
+	if (lines.size() == 0) {
+		return;
+	}
 	
 	// Iterate over the vector and use regex to extract the stuff
 	for (int i = 1; i < lines.size() - 1; i++) {
@@ -50,12 +54,11 @@ void terr::Config::ParseFromConfigFile()
 				}
 			}
 			else {
-				std::string errorMsg = "Config parsing error! on line: " + x;
-				DebugLog::Log<terr::Config>(errorMsg);
+				DebugLog::Log<terr::Config>("Config parsing error", DebugLog::Type::ERROR);
 			}
 		}
 		catch (std::regex_error& err) {
-			std::cout << "REGEX ERROR: " << err.what() << std::endl;
+			std::cout << "REGEX ERROR INSIDE CONFIG.CPP: " << err.what() << std::endl;
 		}
 	}
 }

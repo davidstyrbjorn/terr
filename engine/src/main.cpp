@@ -8,23 +8,26 @@
 
 int main() {
 
+	// This goes through the config files and gets the data 
 	terr::Config::ParseFromConfigFile();
 
-	terr::Window* window = new terr::Window(800, 600, "Terr");
+	// Open the DebugLog file
+	terr::DebugLog::OpenDebugLog();
 
-	terr::DebugLog::Log<terr::Config>("Some error");
+	// Create window
+	terr::Window window = terr::Window(800, 600, "Terr");
 	
-	while (window->IsOpen()) {
+	while (window.IsOpen()) {
 
 		/* Input would happen here */
 		
-		window->Clear();
+		window.Clear();
 		
 		/* Render would go here */
 	
-		window->Display();
+		window.Display();
 	}
 	
+	// Close the DebugLog file! (not really needed)
 	terr::DebugLog::CloseDebugLog();
-	delete window;
 }

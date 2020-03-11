@@ -1,0 +1,3 @@
+[SYSTEM] [class terr::Window] Initialized Terr Window
+[SYSTEM] [class terr::Window] Entering main loop
+[SYSTEM] [class terr::Window] Failed to enter main loop

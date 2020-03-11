@@ -1,3 +1,0 @@
-DEBUG LOG MESSAGE SENT FROM: class terr::Config
-Some error
-=======================================

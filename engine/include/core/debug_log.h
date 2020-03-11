@@ -9,18 +9,26 @@ namespace terr {
 	public:
 		static std::ofstream ofstream;
 
-		template<typename T>
-		static void Log(const std::string& message, std::ostream& outputstream = std::cout) {
-			// Write to output stream
-			outputstream << "DEBUG LOG MESSAGE SENT FROM: " << typeid(T).name() << std::endl;
-			outputstream << message << '\n';
+		enum Type {
+			SYSTEM,
+			ERROR
+		};
 
-			// Write to file stream
+		template<typename T>
+		static void Log(const std::string& message, Type type = Type::SYSTEM) {
+			// Make sure stream is open!
 			if (!ofstream.is_open()) {
-				ofstream.open("terr_debug.txt", std::ios::trunc);
+				OpenDebugLog();
 			}
-			ofstream << "DEBUG LOG MESSAGE SENT FROM: " << typeid(T).name() << std::endl;
-			ofstream << message << std::endl << "=======================================" << std::endl;
+			// Write to file stream
+			std::string from = "[" + std::string(typeid(T).name()) + "]";
+			std::string typeLiteral = type == Type::SYSTEM ? "[SYSTEM]" : "[ERROR]";
+			std::string _literal = typeLiteral + " " + from + " " + message;
+			ofstream << _literal << std::endl;
+		}
+
+		static void OpenDebugLog() {
+			ofstream.open("terr_log.txt", std::ios::trunc);
 		}
 
 		static void CloseDebugLog() {

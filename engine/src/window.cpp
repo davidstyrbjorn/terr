@@ -7,6 +7,7 @@ terr::Window::Window(float _width, float _height, std::string _title) : width(_w
 {
 	// Init GLFW
 	if (!glfwInit()) {
+		terr::DebugLog::Log<terr::Window>("Failed to initalize GLFW", DebugLog::Type::ERROR);
 		return;
 	}
 
@@ -15,7 +16,7 @@ terr::Window::Window(float _width, float _height, std::string _title) : width(_w
 
 	if (!glfw_window) {
 		glfwTerminate();
-		terr::DebugLog::Log<terr::Window>("Failed to initalize GLFW!");
+		terr::DebugLog::Log<terr::Window>("Failed to create GLFW window", DebugLog::Type::ERROR);
 		return;
 	}
 
