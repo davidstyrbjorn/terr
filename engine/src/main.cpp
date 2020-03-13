@@ -3,6 +3,7 @@
 #include"../include/core/debug_log.h"
 #include"../include/core/config.h"
 #include"../include/core/clock.h"
+#include"../include/core/vec3.h"
 
 #include<iostream>
 #include<sstream>

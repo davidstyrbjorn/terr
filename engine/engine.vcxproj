@@ -136,10 +136,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="include\core\vec3.h" />
     <ClCompile Include="src\clock.cpp" />
     <ClCompile Include="src\config.cpp" />
     <ClCompile Include="src\debug_log.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\vec3.cpp" />
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <ItemGroup>
