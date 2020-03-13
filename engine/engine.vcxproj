@@ -137,6 +137,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\clock.cpp" />
+    <ClCompile Include="src\color.cpp" />
     <ClCompile Include="src\config.cpp" />
     <ClCompile Include="src\debug_log.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -147,6 +148,7 @@
     <ClInclude Include="include\core\config.h" />
     <ClInclude Include="include\core\converter_utility.h" />
     <ClInclude Include="include\core\debug_log.h" />
+    <ClInclude Include="include\core\color.h" />
     <ClInclude Include="include\core\window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
