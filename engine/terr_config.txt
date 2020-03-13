@@ -1,0 +1,2 @@
+<windowHeight>600</windowHeight>
+<windowWidth>800</windowWidth>

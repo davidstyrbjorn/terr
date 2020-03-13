@@ -3,7 +3,8 @@
 #include<GLFW/glfw3.h>
 #include"../include/core/debug_log.h"
 
-terr::Window::Window(float _width, float _height, std::string _title) : width(_width), height(_height)
+terr::Window::Window(int _width, int _height, std::string _title,
+	bool _fullScreen) : width(_width), height(_height)
 {
 	// Init GLFW
 	if (!glfwInit()) {
@@ -11,8 +12,27 @@ terr::Window::Window(float _width, float _height, std::string _title) : width(_w
 		return;
 	}
 
+	// Get the monitor reference
+	glfw_monitor = glfwGetPrimaryMonitor();
+
+	const GLFWvidmode* mode = glfwGetVideoMode(glfw_monitor);
+
+	// Notify glfw of some monitor properties
+	glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+	glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+
 	// Tell GLFW to create our window
-	glfw_window = glfwCreateWindow(_width, _height, _title.c_str(), nullptr, nullptr); 
+	if (_fullScreen) {
+		windowed_width = 800; windowed_height = 600; // Default when fullscreen from the start
+		glfw_window = glfwCreateWindow(mode->width, mode->height, _title.c_str(), glfw_monitor, NULL);
+	}
+	else {
+		windowed_width = _width;
+		windowed_height = _height;
+		glfw_window = glfwCreateWindow(_width, _height, _title.c_str(), nullptr, nullptr);
+	}
 
 	if (!glfw_window) {
 		glfwTerminate();

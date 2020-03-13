@@ -1,6 +1,7 @@
 #pragma once
 
 struct GLFWwindow;
+struct GLFWmonitor;
 
 #include<string>
 
@@ -9,7 +10,7 @@ namespace terr {
 	class Window {
 
 	public:
-		Window(float _width, float _height, std::string _title); // Default constructor, constructs a window with given width and height
+		Window(int _width, int _height, std::string _title, bool _fullScreen); // Default constructor, constructs a window with given width and height
 		~Window();
 
 		bool IsOpen();
@@ -19,8 +20,10 @@ namespace terr {
 		static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 	public:
-		float width, height;
+		int width, height;
+		int windowed_width, windowed_height;
 		GLFWwindow* glfw_window;
+		GLFWmonitor* glfw_monitor;
 	};
 	
 }
