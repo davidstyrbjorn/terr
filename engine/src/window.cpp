@@ -2,6 +2,8 @@
 
 #include<GLFW/glfw3.h>
 #include"../include/core/debug_log.h"
+#include"../include/core/color.h"
+#include"../include/core/Input.h"
 
 terr::Window::Window(int _width, int _height, std::string _title,
 	bool _fullScreen) : width(_width), height(_height)
@@ -45,6 +47,7 @@ terr::Window::Window(int _width, int _height, std::string _title,
 
 	// Set some glfw callback functions!
 	glfwSetFramebufferSizeCallback(glfw_window, framebuffer_size_callback);
+	glfwSetKeyCallback(glfw_window, key_callback);
 
 	// Mainly so that we can get Window class in the callback functions!
 	glfwSetWindowUserPointer(glfw_window, this);
@@ -61,10 +64,10 @@ bool terr::Window::IsOpen()
 	return !glfwWindowShouldClose(glfw_window);
 }
 
-void terr::Window::Clear(float r, float g, float b) {
+void terr::Window::Clear(Color color) {
 	// Clear the color and depth buffer 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(r, g, b, 1.0f);
+	glClearColor(color.r, color.g, color.b, 1.0f);
 }
 
 void terr::Window::Display() {
@@ -83,4 +86,61 @@ void terr::Window::framebuffer_size_callback(GLFWwindow* window, int width, int 
 	
 	terr_window->width = width;
 	terr_window->height = height;
+}
+
+/* EVENT RELATED FUNCTIONS!!! */
+
+void terr::Window::PollEvent(Event& event)
+{
+	event_queu.push_back(event);
+}
+
+void terr::Window::FlushEvents()
+{
+	event_queu.clear();
+}
+
+std::vector<terr::Event>& terr::Window::GetEvents()
+{
+	return event_queu;
+}
+
+/* INPUT RELATED FUNCTIONS!!! */
+
+void terr::Window::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	static terr::Window* terr_window = static_cast<terr::Window*>(glfwGetWindowUserPointer(window));
+	if (action == GLFW_PRESS) {
+		terr::Event _event;
+		_event.eventType = EventType::KEY_PRESSED;
+		_event.key = key;
+
+		terr_window->PollEvent(_event);
+	}
+	else if (action == GLFW_RELEASE) {
+		terr::Event _event;
+		_event.eventType = EventType::KEY_RELEASED;
+		_event.key = key;
+
+		terr_window->PollEvent(_event);
+	}
+}
+
+void terr::Window::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+	static terr::Window* terr_window = static_cast<terr::Window*>(glfwGetWindowUserPointer(window));
+	if (action == GLFW_PRESS) {
+		terr::Event _event;
+		_event.eventType = EventType::MOUSE_DOWN;
+		_event.button = button;
+
+		terr_window->PollEvent(_event);
+	}
+	else if (action == GLFW_RELEASE) {
+		terr::Event _event;
+		_event.eventType = EventType::MOUSE_UP;
+		_event.button = button;
+
+		terr_window->PollEvent(_event);
+	}
 }

@@ -4,14 +4,14 @@
 #include"../include/core/config.h"
 #include"../include/core/clock.h"
 #include"../include/core/vec3.h"
+#include"../include/core/color.h"
+#include"../include/core/Input.h"
 
 #include<iostream>
 #include<sstream>
 #include<math.h>
 
 int main() {
-
-	float ticker = 0.0f;
 
 	// This goes through the config files and gets the data 
 	terr::Config::ParseFromConfigFile();
@@ -20,32 +20,41 @@ int main() {
 	terr::DebugLog::OpenDebugLog();
 
 	// Create window
-	terr::Window window = terr::Window(400, 300, "Terr", false);
+	terr::Window window = terr::Window(400, 300, "Terr", true);
 
-	terr::Clock clock;
-	clock.reset();
-	clock.start();
-
-	int fps = 0;
+	terr::Color color;
 
 	while (window.IsOpen()) {
-		
-		if (clock.getTicks() >= 1000) {
-			std::cout << fps << std::endl;
-			fps = 0;
-			clock.reset();
-			clock.start();
+	
+		// Input here
+		for(auto _event : window.GetEvents()){
+			if(_event.eventType == terr::EventType::KEY_PRESSED){
+				if (_event.key == TERR_KEY_R)
+					color.r = 1;
+				if (_event.key == TERR_KEY_G)
+					color.g = 1;
+				if (_event.key == TERR_KEY_B)
+					color.b = 1;
+			}
+			if (_event.eventType == terr::EventType::KEY_RELEASED) {
+				if (_event.key == TERR_KEY_R)
+					color.r = 0;
+				if (_event.key == TERR_KEY_G)
+					color.g = 0;
+				if (_event.key == TERR_KEY_B)
+					color.b = 0;
+			}
 		}
+		window.FlushEvents();
 
-		/* Input would happen here */
+		// Program logic
+	
+
+		// Render starts here
+		window.Clear(color);
 		
-		window.Clear(sin(ticker), cos(ticker), 1);
-		
-		/* Render would go here */
 	
 		window.Display();
-
-		fps++;
 	}
 	
 	// Close the DebugLog file! (not really needed)
