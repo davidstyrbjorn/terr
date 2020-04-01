@@ -11,6 +11,9 @@
 #include<sstream>
 #include<math.h>
 
+#define GLEW_STATIC
+#include<GL/glew.h>
+
 int main() {
 
 	// This goes through the config files and gets the data 
@@ -20,7 +23,12 @@ int main() {
 	terr::DebugLog::OpenDebugLog();
 
 	// Create window
-	terr::Window window = terr::Window(400, 300, "Terr", true);
+	terr::Window window = terr::Window(900, 630, "Terr", false);
+
+	// GLEW init
+	if (glewInit() != GLEW_OK) {
+		std::cout << "glew failed to init" << std::endl;
+	}
 
 	terr::Color color;
 
@@ -28,32 +36,17 @@ int main() {
 	
 		// Input here
 		for(auto _event : window.GetEvents()){
-			if(_event.eventType == terr::EventType::KEY_PRESSED){
-				if (_event.key == TERR_KEY_R)
-					color.r = 1;
-				if (_event.key == TERR_KEY_G)
-					color.g = 1;
-				if (_event.key == TERR_KEY_B)
-					color.b = 1;
-			}
-			if (_event.eventType == terr::EventType::KEY_RELEASED) {
-				if (_event.key == TERR_KEY_R)
-					color.r = 0;
-				if (_event.key == TERR_KEY_G)
-					color.g = 0;
-				if (_event.key == TERR_KEY_B)
-					color.b = 0;
-			}
+
 		}
 		window.FlushEvents();
 
 		// Program logic
-	
+		
 
 		// Render starts here
 		window.Clear(color);
 		
-	
+
 		window.Display();
 	}
 	
