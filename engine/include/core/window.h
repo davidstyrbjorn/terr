@@ -36,6 +36,8 @@ namespace terr {
 		GLFWwindow* glfw_window;
 		GLFWmonitor* glfw_monitor;
 		std::vector<Event> event_queu;
+
+		static int KEYS[1028];
 	};
 	
 }
