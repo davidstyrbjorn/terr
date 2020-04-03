@@ -142,6 +142,7 @@
     <ClCompile Include="src\config.cpp" />
     <ClCompile Include="src\debug_log.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\shader.cpp" />
     <ClCompile Include="src\vec3.cpp" />
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
@@ -153,6 +154,7 @@
     <ClInclude Include="include\core\color.h" />
     <ClInclude Include="include\core\engine.h" />
     <ClInclude Include="include\core\Input.h" />
+    <ClInclude Include="include\core\shader.h" />
     <ClInclude Include="include\core\window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

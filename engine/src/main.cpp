@@ -6,6 +6,7 @@
 #include"../include/core/vec3.h"
 #include"../include/core/color.h"
 #include"../include/core/Input.h"
+#include"../include/core/shader.h"
 
 #include<iostream>
 #include<sstream>
@@ -20,76 +21,14 @@
 #include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
 #include <glm/gtc/type_ptr.hpp> // glm::value_ptr
 
+#define PI 3.14159265359f
+#define DEG2RAD(x) (x*180.0f)/PI
+
 typedef unsigned int uint;
 
-uint load_shaders(const char* vertex_path, const char* frag_path) {
-	uint vertex_id = glCreateShader(GL_VERTEX_SHADER);
-	uint fragment_id = glCreateShader(GL_FRAGMENT_SHADER);
-
-	// Read vertex shader code from the file with the given path
-	std::string vertex_shader_code;
-	std::ifstream ifstream(vertex_path, std::ios::in);
-	if (ifstream.is_open()) {
-		std::stringstream sstr;
-		sstr << ifstream.rdbuf();
-		vertex_shader_code = sstr.str();
-		ifstream.close();
-	}
-	else {
-		std::cout << "VERTEX: Can't open vertex shader code file!!!" << std::endl;
-	}
-
-	std::string fragment_shader_code;
-	ifstream.open(frag_path, std::ios::in);
-	if (ifstream.is_open()) {
-		std::stringstream sstr;
-		sstr << ifstream.rdbuf();
-		fragment_shader_code = sstr.str();
-		ifstream.close();
-	}
-	else {
-		std::cout << "FRAGMENT: Can't open fragment shader code file!!!" << std::endl;
-	}
-
-	// Helpers
-	int info_log_length;
-
-	// Compile the vertex & fragment shaders!
-	char const* vertex_c_str = vertex_shader_code.c_str();
-	glShaderSource(vertex_id, 1, &vertex_c_str, NULL);
-	glCompileShader(vertex_id);
-	// Check for error
-	glGetShaderiv(vertex_id, GL_INFO_LOG_LENGTH, &info_log_length);
-	if (info_log_length > 0) {
-		std::vector<char> vertex_shader_error_message(info_log_length + 1);
-		glGetShaderInfoLog(vertex_id, info_log_length, NULL, &vertex_shader_error_message[0]);
-		printf("VERTEX: %s\n", &vertex_shader_error_message[0]);
-	}
-
-	char const* frag_c_str = fragment_shader_code.c_str();
-	glShaderSource(fragment_id, 1, &frag_c_str, NULL);
-	glCompileShader(fragment_id);
-	// Check for error
-	glGetShaderiv(fragment_id, GL_INFO_LOG_LENGTH, &info_log_length);
-	if (info_log_length > 0) {
-		std::vector<char> fragment_shader_error_message(info_log_length + 1);
-		glGetShaderInfoLog(fragment_id, info_log_length, NULL, &fragment_shader_error_message[0]);
-		printf("FRAGMENT: %s\n", &fragment_shader_error_message[0]);
-	}
-
-	// Link the shader program
-	uint program_id = glCreateProgram();
-	glAttachShader(program_id, vertex_id);
-	glAttachShader(program_id, fragment_id);
-	glLinkProgram(program_id);
-
-	glDetachShader(program_id, vertex_id);
-	glDetachShader(program_id, fragment_id);
-
-	glDeleteShader(vertex_id); glDeleteShader(fragment_id);
-
-	return program_id;
-}
+struct vec3 {
+	float x, y, z;
+};
 
 int main() {
 
@@ -100,24 +39,38 @@ int main() {
 	terr::DebugLog::OpenDebugLog();
 
 	// Create window
-	terr::Window window = terr::Window(900, 630, "Terr", false);
+	terr::Window window = terr::Window(800, 600, "Terr", false);
 
 	// GLEW init
 	if (glewInit() != GLEW_OK) {
 		std::cout << "glew failed to init" << std::endl;
 	}
 
-	// An array of 3 vectors which represents 3 vertices
-	const float vertices[] = {
-		 0.5f,  0.5f, 0.0f,  // top right
-		 0.5f, -0.5f, 0.0f,  // bottom right
-		-0.5f, -0.5f, 0.0f,  // bottom left
-		-0.5f,  0.5f, 0.0f   // top left
+	// DOING SOME STUFF WITH PEN AND PAPER BRB
+
+	std::vector<vec3> points;
+	for (int y = 0; y < 4; y++) {
+		for (int x = 0; x < 4; x++) {
+			points.push_back({ (float)x, (float)y, 0 });
+		}
+	}
+
+	float vertices[] = {
+		 0.0f,  0.0f, 0.0f,   // top left 
+		 1.0f,  0.0f, 0.0f,  // top right 
+		 1.0f,  1.0f, 0.0f,  // bottom right 
+		 0.0f,  1.0f, 0.0f  // bottom left 
 	};
 
-	const unsigned int indices[] = {
-		0, 1, 3,
-		1, 2, 3
+	// Order goes: TOP-LEFT -> TOP-RIGHT -> BOTTOM-RIGHT and then TOP-LEFT -> BOTTOM-RIGHT -> BOTTOM-LEFT
+	unsigned int indices[] = {  
+		0, 1, 5,   
+		0, 5, 4,
+
+		1, 2, 6,
+		1, 6, 5
+
+
 	};
 
 	// Create VAO
@@ -125,8 +78,8 @@ int main() {
 	glGenBuffers(1, &vao);
 	glBindVertexArray(vao);
 
-	// Create IBO
-	unsigned int ibo;
+	// IBO
+	uint ibo;
 	glGenBuffers(1, &ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
@@ -135,15 +88,24 @@ int main() {
 	unsigned int vbo;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(vec3), &points.front(), GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-	uint program_id = load_shaders("vertex.txt", "fragment.txt");
+	terr::Shader shader("vertex.txt", "fragment.txt");
+
+	// Projection
+	//glm::mat4 proj = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
+	glm::mat4 proj = glm::ortho(0, 2, 2, 0);
+	shader.Enable();
+	shader.UniformMat4x4("projection", proj);
 
 	float ticker = 0;
+
+	//glEnable(GL_CULL_FACE);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	while (window.IsOpen()) {
 	
@@ -156,24 +118,25 @@ int main() {
 		// Program logic
 		
 		// Send a translation matrix to the shader!
-		glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(0.5*cos(ticker*0.1f), 0.5*sin(ticker*0.1f), 0));
-		glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), (ticker), glm::vec3(0, 0, 1));
-		glm::mat4 scale = glm::scale(glm::mat4(1.0), glm::vec3(0.5f, 0.5f, 1.0f));
+		float s = 1.0f;
+		glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
+		glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), (ticker), glm::vec3(0, 1, 1));
+		glm::mat4 scale = glm::scale(glm::mat4(1.0), glm::vec3(1.0f*s, 1.0f*s, 1.0f*s));
 
-		uint location = glGetUniformLocation(program_id, "translate");
-		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(rotation*translate*scale));
+		auto res = scale * translate;
 
-		// This is a comment in my mexican accent
+		shader.UniformMat4x4("model", res);
 
 		// Render starts here
-		glUseProgram(program_id);
+		shader.Enable();
 		window.Clear({0.15f, 0.15f, 0.15f});
 		
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(vao);
+		glDrawElements(GL_TRIANGLES, 3*4, GL_UNSIGNED_INT, 0);
 
 		window.Display();
 
-		ticker += 0.05f;
+		ticker += 0.02f;
 	}
 	
 	// Close the DebugLog file! (not really needed)
