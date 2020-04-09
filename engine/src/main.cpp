@@ -1,16 +1,10 @@
-#include"../include/core/window.h"
-
-#include"../include/core/debug_log.h"
-#include"../include/core/config.h"
-#include"../include/core/clock.h"
-#include"../include/core/vec3.h"
-#include"../include/core/color.h"
-#include"../include/core/Input.h"
 #include"../include/core/shader.h"
+#include"../include/core/engine.h"
 
 #include<iostream>
 #include<sstream>
 #include<math.h>
+#include<vector>
 
 #define GLEW_STATIC
 #include<GL/glew.h>
@@ -21,6 +15,8 @@
 #include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
 #include <glm/gtc/type_ptr.hpp> // glm::value_ptr
 
+#include"../include/imgui/imgui.h"
+
 #define PI 3.14159265359f
 #define DEG2RAD(x) (x*180.0f)/PI
 
@@ -30,117 +26,164 @@ struct vec3 {
 	float x, y, z;
 };
 
-int main() {
+struct uvec3 {
+	uint x, y, z;
+};
 
-	// This goes through the config files and gets the data 
-	terr::Config::ParseFromConfigFile();
-
-	// Open the DebugLog file
-	terr::DebugLog::OpenDebugLog();
-
-	// Create window
-	terr::Window window = terr::Window(800, 600, "Terr", false);
-
-	// GLEW init
-	if (glewInit() != GLEW_OK) {
-		std::cout << "glew failed to init" << std::endl;
+class App : terr::TerrEngine {
+public:
+	App() : terr::TerrEngine(), shader("vertex.txt", "fragment.txt") {
+		Start();
 	}
 
-	// DOING SOME STUFF WITH PEN AND PAPER BRB
-
-	std::vector<vec3> points;
-	for (int y = 0; y < 4; y++) {
-		for (int x = 0; x < 4; x++) {
-			points.push_back({ (float)x, (float)y, 0 });
+	void OnUserStart() override {
+		const float S = 100.0f;
+		const int GRID_SIZE = 4;
+		std::vector<vec3> points;
+		for (int y = 0; y < GRID_SIZE; y++) {
+			for (int x = 0; x < GRID_SIZE; x++) {
+				points.push_back({ S*(float)x, 0, S*(float)y});
+			}
 		}
-	}
 
-	float vertices[] = {
-		 0.0f,  0.0f, 0.0f,   // top left 
-		 1.0f,  0.0f, 0.0f,  // top right 
-		 1.0f,  1.0f, 0.0f,  // bottom right 
-		 0.0f,  1.0f, 0.0f  // bottom left 
-	};
+		const float SIZE = 100.0f;
+		float vertices[] = {
+			 0.0f,  0.0f, 0.0f,   // top left 
+			 SIZE,  0.0f, 0.0f,  // top right 
+			 SIZE,  SIZE, 0.0f,  // bottom right 
+			 0.0f,  SIZE, 0.0f  // bottom left 
+		};
 
-	// Order goes: TOP-LEFT -> TOP-RIGHT -> BOTTOM-RIGHT and then TOP-LEFT -> BOTTOM-RIGHT -> BOTTOM-LEFT
-	unsigned int indices[] = {  
-		0, 1, 5,   
-		0, 5, 4,
+		// Order goes: TOP-LEFT -> TOP-RIGHT -> BOTTOM-RIGHT and then TOP-LEFT -> BOTTOM-RIGHT -> BOTTOM-LEFT
+		unsigned int indices[] = {
+			0, 1, 5,
+			0, 5, 4,
+		
+			1, 2, 6,
+			1, 6, 5,
+		
+			2, 3, 7,
+			2, 7, 6,
+		
+			4, 5, 9,
+			4, 9, 8,
 
-		1, 2, 6,
-		1, 6, 5
+			5, 6, 10,
+			5, 10, 9,
 
+			6, 7, 11,
+			6, 11, 10,
 
-	};
+			8, 9, 13,
+			8, 13, 12,
 
-	// Create VAO
-	unsigned int vao;
-	glGenBuffers(1, &vao);
-	glBindVertexArray(vao);
+			9, 10, 14,
+			9, 14, 13,
 
-	// IBO
-	uint ibo;
-	glGenBuffers(1, &ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+			10, 11, 15, 
+			10, 15, 14
+		};
 
-	// Create VBO
-	unsigned int vbo;
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(vec3), &points.front(), GL_STATIC_DRAW);
+		for (int y = 0; y < GRID_SIZE; y++) {
+			for (int x = 0; x < GRID_SIZE; x++) {
 
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+				uint row1 = y * (GRID_SIZE + 1);
+				uint row2 = (y + 1) * (GRID_SIZE + 1);
 
-	terr::Shader shader("vertex.txt", "fragment.txt");
-
-	// Projection
-	//glm::mat4 proj = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
-	glm::mat4 proj = glm::ortho(0, 2, 2, 0);
-	shader.Enable();
-	shader.UniformMat4x4("projection", proj);
-
-	float ticker = 0;
-
-	//glEnable(GL_CULL_FACE);
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	while (window.IsOpen()) {
-	
-		// Input here
-		for(auto _event : window.GetEvents()){
-
+				// Triangle 1
+				indices_list.push_back({row1 + x, row1 + x + 1, row2 + x + 1});
+				// Triangle 2
+				indices_list.push_back({row1 + x, row2 + x + 1, row2 + x});
+			}
 		}
-		window.FlushEvents();
 
-		// Program logic
-		
-		// Send a translation matrix to the shader!
-		float s = 1.0f;
-		glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
-		glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), (ticker), glm::vec3(0, 1, 1));
-		glm::mat4 scale = glm::scale(glm::mat4(1.0), glm::vec3(1.0f*s, 1.0f*s, 1.0f*s));
+		//unsigned int indices[] = {
+		//	0, 1, 2,
+		//	0, 2, 3
+		//};
 
-		auto res = scale * translate;
-
-		shader.UniformMat4x4("model", res);
-
-		// Render starts here
-		shader.Enable();
-		window.Clear({0.15f, 0.15f, 0.15f});
-		
+		// Create VAO
+		glGenBuffers(1, &vao);
 		glBindVertexArray(vao);
-		glDrawElements(GL_TRIANGLES, 3*4, GL_UNSIGNED_INT, 0);
 
-		window.Display();
+		// IBO
+		glGenBuffers(1, &ibo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_list.size() * sizeof(uvec3), &indices_list.front(), GL_STATIC_DRAW);
 
-		ticker += 0.02f;
+		// Create VBO
+		glGenBuffers(1, &vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(vec3), &points.front(), GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+		// Projection
+		glm::mat4 proj = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.001f, 1000.0f);
+		//glm::mat4 proj = glm::ortho(0.0f, 800.0f, 600.0f, 0.0f, -1.0f, 1.0f);
+		shader.Enable();
+		shader.UniformMat4x4("projection", proj);
+
 	}
+
+	void OnUserUpdate(float dt) override {
+
+	}
+
+	void OnUserRender() override {
+
+		ImGui::Begin("test");
+		ImGui::SliderAngle("View Rotation X", &view_x_rot);
+		ImGui::SliderFloat("View Zoom", &view_zoom, 1.0f, 10.0f);
+		ImGui::DragFloat3("View Position", &view_position[0]);
+		ImGui::DragFloat3("Model Position", &model_position[0]);
+		ImGui::End();
+
+		// Upload some shit to the shader
+		auto trans_view_matrix = glm::rotate(glm::mat4(1.0f), view_x_rot, glm::vec3(1, 0, 0));
+		auto rot_view_matrix = glm::translate(glm::mat4(1.0f), -view_position);
+		auto scale_view_matrix = glm::scale(glm::mat4(1.0f), glm::vec3(view_zoom, view_zoom, 1));
+
+		model_matrix = glm::translate(glm::mat4(1.0f), model_position);
+
+		view_matrix = scale_view_matrix * trans_view_matrix * rot_view_matrix;
+
+		shader.UniformMat4x4("view", view_matrix);
+		shader.UniformMat4x4("model", model_matrix);
+
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glDrawElements(GL_TRIANGLES, indices_list.size()*3, GL_UNSIGNED_INT, 0);
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+
+	void OnUserEvent(terr::Event event) override {
+
+	}
+
+	void OnUserExit() override {
 	
-	// Close the DebugLog file! (not really needed)
-	terr::DebugLog::CloseDebugLog();
-	// Important call!
-	terr::Config::ClearAllocatedMemory();
+	}
+
+private:
+	unsigned int vao = 0;
+	unsigned int vbo = 0;
+	unsigned int ibo = 0;
+	terr::Shader shader;
+
+	glm::vec3 view_position;
+	glm::mat4 view_matrix;
+	glm::mat4 model_matrix;
+	glm::vec3 model_position;
+	float view_x_rot = 0.0f;
+	float view_zoom = 1.0f;
+
+	std::vector<uvec3> indices_list;
+};
+
+int main() {
+	App app = App();
+
+	return 0;
 }

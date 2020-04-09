@@ -137,10 +137,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="include\core\vec3.h" />
+    <ClCompile Include="include\imgui\imgui.cpp" />
+    <ClCompile Include="include\imgui\imgui_demo.cpp" />
+    <ClCompile Include="include\imgui\imgui_draw.cpp" />
+    <ClCompile Include="include\imgui\imgui_glfw.cpp" />
+    <ClCompile Include="include\imgui\imgui_impl_glfw_gl3.cpp" />
     <ClCompile Include="src\clock.cpp" />
     <ClCompile Include="src\color.cpp" />
     <ClCompile Include="src\config.cpp" />
     <ClCompile Include="src\debug_log.cpp" />
+    <ClCompile Include="src\engine.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\shader.cpp" />
     <ClCompile Include="src\vec3.cpp" />
@@ -156,6 +162,14 @@
     <ClInclude Include="include\core\Input.h" />
     <ClInclude Include="include\core\shader.h" />
     <ClInclude Include="include\core\window.h" />
+    <ClInclude Include="include\imgui\imconfig.h" />
+    <ClInclude Include="include\imgui\imgui.h" />
+    <ClInclude Include="include\imgui\imgui_glfw.h" />
+    <ClInclude Include="include\imgui\imgui_impl_glfw_gl3.h" />
+    <ClInclude Include="include\imgui\imgui_internal.h" />
+    <ClInclude Include="include\imgui\stb_rect_pack.h" />
+    <ClInclude Include="include\imgui\stb_textedit.h" />
+    <ClInclude Include="include\imgui\stb_truetype.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

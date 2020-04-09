@@ -5,6 +5,9 @@
 #include"../include/core/color.h"
 #include"../include/core/Input.h"
 
+#include"../include/imgui/imgui.h"
+#include"../include/imgui/imgui_impl_glfw_gl3.h"
+
 terr::Window::Window(int _width, int _height, std::string _title,
 	bool _fullScreen) : width(_width), height(_height)
 {
@@ -48,13 +51,19 @@ terr::Window::Window(int _width, int _height, std::string _title,
 	// Set some glfw callback functions!
 	glfwSetFramebufferSizeCallback(glfw_window, framebuffer_size_callback);
 	glfwSetKeyCallback(glfw_window, key_callback);
+	glfwSetScrollCallback(glfw_window, scroll_callback);
+	glfwSetCharCallback(glfw_window, character_callback);
 
 	// Mainly so that we can get Window class in the callback functions!
 	glfwSetWindowUserPointer(glfw_window, this);
+
+	// Initalize DearImGui stuff
+	ImGui_ImplGlfwGL3_Init(glfw_window, false);
 }
 
 terr::Window::~Window()
 {
+	ImGui_ImplGlfwGL3_Shutdown();
 	glfwTerminate();
 }
 
@@ -65,12 +74,20 @@ bool terr::Window::IsOpen()
 }
 
 void terr::Window::Clear(Color color) {
+
+	// Tell ImGui we're onto a new frame
+	ImGui_ImplGlfwGL3_NewFrame();
+
 	// Clear the color and depth buffer 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(color.r, color.g, color.b, 1.0f);
 }
 
 void terr::Window::Display() {
+
+	// Tell ImGui to render just before we swap buffers!
+	ImGui::Render();
+
 	// Swap so that this cycles render buffer is the one showing
 	glfwSwapBuffers(glfw_window);
 
@@ -124,6 +141,9 @@ void terr::Window::key_callback(GLFWwindow* window, int key, int scancode, int a
 
 		terr_window->PollEvent(_event);
 	}
+
+	// ImGui callbacks!
+	ImGui_ImplGlfwGL3_KeyCallback(window, key, scancode, action, mods);
 }
 
 void terr::Window::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
@@ -143,4 +163,19 @@ void terr::Window::mouse_button_callback(GLFWwindow* window, int button, int act
 
 		terr_window->PollEvent(_event);
 	}
+
+	// ImGui callbacks!
+	ImGui_ImplGlfwGL3_MouseButtonCallback(window, button, action, mods);
+}
+
+void terr::Window::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	// ImGui callbacks!
+	ImGui_ImplGlfwGL3_ScrollCallback(window, xoffset, yoffset);
+}
+
+void terr::Window::character_callback(GLFWwindow* window, unsigned int codepoint)
+{
+	// ImGui callbacks!
+	ImGui_ImplGlfwGL3_CharCallback(window, codepoint);
 }
