@@ -30,7 +30,7 @@ terr::TerrEngine::~TerrEngine()
 
 void terr::TerrEngine::Start()
 {
-	OnUserStart();
+	this->OnUserStart();
 
 	while (window->IsOpen()) {
 		// Handle events

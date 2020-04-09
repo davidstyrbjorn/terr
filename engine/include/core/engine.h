@@ -28,17 +28,3 @@ namespace terr {
 		terr::Clock deltaClock;
 	};
 }
-
-/*
-
-class Application : TerrEngine{
-public:
-	
-	// User-end methods
-	void OnUserStart();
-	void OnUserUpdate(float dt);
-	void OnUserRender();
-	void OnUserExit();
-}
-
-*/
