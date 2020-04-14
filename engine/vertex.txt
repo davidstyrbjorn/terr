@@ -47,10 +47,9 @@ float pNoise(vec2 p, int res){
 	return nf*nf*nf*nf;
 }
 
-out float x;
+out vec3 pos;
 
 void main(){
-	x = pNoise(position.xz, 10);
-
+	pos = position.xyz;
 	gl_Position = projection * view * model * vec4(position.xyz, 1.0);
 }

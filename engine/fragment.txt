@@ -1,9 +1,9 @@
 #version 330 core
 
-in float x;
+in vec3 pos;
 
 out vec3 color;
 
 void main(){
-	color = vec3(1,0,0);
+	color = vec3(abs(pos.y)/25.0f, 0.3, 0);
 }
