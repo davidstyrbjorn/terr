@@ -147,8 +147,8 @@
     <ClCompile Include="src\config.cpp" />
     <ClCompile Include="src\debug_log.cpp" />
     <ClCompile Include="src\engine.cpp" />
+    <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\shader.cpp" />
-    <ClCompile Include="src\testdemonstration.cpp" />
     <ClCompile Include="src\vec3.cpp" />
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>

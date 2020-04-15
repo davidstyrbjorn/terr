@@ -40,6 +40,8 @@ void terr::TerrEngine::Start()
 		}
 		window->FlushEvents();
 
+		deltaClock.start();
+
 		/* Application logic should be processed here! */
 
 		// User update method should be called!
