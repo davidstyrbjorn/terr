@@ -2,6 +2,7 @@
 #include"../include/core/engine.h"
 
 #include<iostream>
+#include <iomanip>
 #include<sstream>
 #include<math.h>
 #include<vector>
@@ -38,14 +39,14 @@ public:
 
 	void OnUserStart() override {
 		const float S = 25.0f;
-		const int GRID_SQUARES = 16;
+		const int GRID_SQUARES = 32;
 
 		float freq = 0;
 
 		std::vector<vec3> points;
 		for (int z = 0; z < GRID_SQUARES; z++) {
 			for (int x = 0; x < GRID_SQUARES; x++) {
-				freq = rand();
+				freq+=0.1f;
 				float y = S * sin(freq);
 				points.push_back({ S * (float)x, y, S * (float)z });
 			}
@@ -141,7 +142,9 @@ public:
 	}
 
 	void OnUserUpdate(float dt) override {
-
+		std::cout << dt << std::endl;
+		i++;
+		clearColor.r = sin(0.001f * i);
 	}
 
 	void OnUserRender() override {
@@ -192,6 +195,7 @@ private:
 	float view_zoom = 1.0f;
 
 	int index_count;
+	int i = 0;
 };
 
 int main() {

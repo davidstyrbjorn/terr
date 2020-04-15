@@ -22,9 +22,11 @@ namespace terr {
 		virtual void OnUserRender() = 0;
 		virtual void OnUserExit() = 0;
 		virtual void OnUserEvent(terr::Event event) = 0;
+		terr::Color clearColor;
 
 	private:
 		terr::Window* window;
 		terr::Clock deltaClock;
+		
 	};
 }
