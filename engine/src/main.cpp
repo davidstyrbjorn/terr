@@ -37,25 +37,55 @@ public:
 	}
 
 	void OnUserStart() override {
-		const float S = 100.0f;
-		const int GRID_SIZE = 4;
+		const float S = 25.0f;
+		const int GRID_SQUARES = 16;
+
+		float freq = 0;
+
 		std::vector<vec3> points;
-		for (int y = 0; y < GRID_SIZE; y++) {
-			for (int x = 0; x < GRID_SIZE; x++) {
-				points.push_back({ S*(float)x, 0, S*(float)y});
+		for (int z = 0; z < GRID_SQUARES; z++) {
+			for (int x = 0; x < GRID_SQUARES; x++) {
+				freq = rand();
+				float y = S * sin(freq);
+				points.push_back({ S * (float)x, y, S * (float)z });
 			}
 		}
 
-		const float SIZE = 100.0f;
-		float vertices[] = {
-			 0.0f,  0.0f, 0.0f,   // top left 
-			 SIZE,  0.0f, 0.0f,  // top right 
-			 SIZE,  SIZE, 0.0f,  // bottom right 
-			 0.0f,  SIZE, 0.0f  // bottom left 
-		};
+		int squares_per_side = GRID_SQUARES - 1;
+		int no_squares = squares_per_side * squares_per_side;
+		index_count = no_squares * 6;
+
+		unsigned int* indices = new unsigned int[index_count];
+
+		int counter = 0;
+
+		int pointer = 0;
+		for (int i = 0; i < index_count; i++) {
+
+			int _temp = GRID_SQUARES + 1;
+
+			indices[i] = pointer; i += 1;
+			indices[i] = pointer + 1; i += 1;
+			indices[i] = pointer + _temp; i += 1;
+			indices[i] = pointer; i += 1;
+			indices[i] = pointer + _temp; i += 1;
+			indices[i] = pointer + (_temp-1);
+
+			counter++;
+
+			if (counter == GRID_SQUARES-1) {
+				pointer += 2;
+				counter = 0;
+			}
+			else {
+				pointer += 1;
+			}
+		}
+
+		std::vector<uint> x(indices, indices + index_count);
 
 		// Order goes: TOP-LEFT -> TOP-RIGHT -> BOTTOM-RIGHT and then TOP-LEFT -> BOTTOM-RIGHT -> BOTTOM-LEFT
-		unsigned int indices[] = {
+		unsigned int xxxindices[] = {
 			0, 1, 5,
 			0, 5, 4,
 		
@@ -84,24 +114,6 @@ public:
 			10, 15, 14
 		};
 
-		for (int y = 0; y < GRID_SIZE; y++) {
-			for (int x = 0; x < GRID_SIZE; x++) {
-
-				uint row1 = y * (GRID_SIZE + 1);
-				uint row2 = (y + 1) * (GRID_SIZE + 1);
-
-				// Triangle 1
-				indices_list.push_back({row1 + x, row1 + x + 1, row2 + x + 1});
-				// Triangle 2
-				indices_list.push_back({row1 + x, row2 + x + 1, row2 + x});
-			}
-		}
-
-		//unsigned int indices[] = {
-		//	0, 1, 2,
-		//	0, 2, 3
-		//};
-
 		// Create VAO
 		glGenBuffers(1, &vao);
 		glBindVertexArray(vao);
@@ -109,7 +121,7 @@ public:
 		// IBO
 		glGenBuffers(1, &ibo);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_list.size() * sizeof(uvec3), &indices_list.front(), GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, x.size() * sizeof(uint), &x.front(), GL_STATIC_DRAW);
 
 		// Create VBO
 		glGenBuffers(1, &vbo);
@@ -154,7 +166,7 @@ public:
 		shader.UniformMat4x4("model", model_matrix);
 
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		glDrawElements(GL_TRIANGLES, indices_list.size()*3, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, 0);
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
@@ -179,7 +191,7 @@ private:
 	float view_x_rot = 0.0f;
 	float view_zoom = 1.0f;
 
-	std::vector<uvec3> indices_list;
+	int index_count;
 };
 
 int main() {
