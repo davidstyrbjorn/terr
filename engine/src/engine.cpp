@@ -3,7 +3,15 @@
 #define GLEW_STATIC
 #include<GL/glew.h>
 
-terr::TerrEngine::TerrEngine()
+terr::TerrEngine::~TerrEngine()
+{
+	delete window;
+
+	terr::DebugLog::CloseDebugLog();
+	terr::Config::ClearAllocatedMemory();
+}
+
+void terr::TerrEngine::CreateWindow(unsigned int width, unsigned int height)
 {
 	// This goes through the config files and gets the data 
 	terr::Config::ParseFromConfigFile();
@@ -12,20 +20,15 @@ terr::TerrEngine::TerrEngine()
 	terr::DebugLog::OpenDebugLog();
 
 	// Create window 
-	window = new terr::Window(800, 600, "terr Window", false);
+	window = new terr::Window(width, height, "terr Window", false);
 
 	// Initalize GLEW!
 	if (glewInit() != GLEW_OK) {
 		terr::DebugLog::Log<terr::TerrEngine>("Failed to initalize GLEW!");
 	}
-}
 
-terr::TerrEngine::~TerrEngine()
-{
-	delete window;
-
-	terr::DebugLog::CloseDebugLog();
-	terr::Config::ClearAllocatedMemory();
+	// Go into main loop
+	Start();
 }
 
 void terr::TerrEngine::Start()

@@ -10,7 +10,7 @@
 #include<iostream>
 #include<vector>
 
-terr::Shader::Shader(std::string vertex_file_path, std::string fragment_file_path)
+void terr::Shader::CreateShader(std::string vertex_file_path, std::string fragment_file_path)
 {
 	uint vertex_id = glCreateShader(GL_VERTEX_SHADER);
 	uint fragment_id = glCreateShader(GL_FRAGMENT_SHADER);
@@ -85,6 +85,7 @@ terr::Shader::~Shader()
 {
 	glDeleteProgram(program_id);
 }
+
 
 void terr::Shader::Enable()
 {

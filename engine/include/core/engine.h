@@ -7,14 +7,16 @@
 #include"color.h"
 
 namespace terr {
+
 	class TerrEngine {
 	public:
 		// Constructor
-		TerrEngine();
+		TerrEngine() { }
 
 		// Destructor
 		~TerrEngine();
 
+		void CreateWindow(unsigned int width, unsigned int height);
 		void Start();
 
 		virtual void OnUserStart() = 0;
@@ -24,7 +26,7 @@ namespace terr {
 		virtual void OnUserEvent(terr::Event event) = 0;
 
 	private:
-		terr::Window* window;
+		terr::Window* window = nullptr;
 		terr::Clock deltaClock;
 	};
 }

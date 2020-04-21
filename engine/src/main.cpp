@@ -30,23 +30,27 @@ struct uvec3 {
 	uint x, y, z;
 };
 
-class App : terr::TerrEngine {
+class App : public terr::TerrEngine {
 public:
-	App() : terr::TerrEngine(), shader("vertex.txt", "fragment.txt") {
-		Start();
+	App() {
+
 	}
 
 	void OnUserStart() override {
-		const float S = 25.0f;
-		const int GRID_SQUARES = 16;
+
+		shader.CreateShader("vertex.txt", "fragment.txt");
+
+		const float S = 10.0f;
+		const int GRID_SQUARES = 64;
 
 		float freq = 0;
 
 		std::vector<vec3> points;
 		for (int z = 0; z < GRID_SQUARES; z++) {
 			for (int x = 0; x < GRID_SQUARES; x++) {
-				freq = rand();
-				float y = S * sin(freq);
+				//freq = rand();
+				//float y = S * sin(freq);
+				float y = 0;
 				points.push_back({ S * (float)x, y, S * (float)z });
 			}
 		}
@@ -84,36 +88,6 @@ public:
 
 		std::vector<uint> x(indices, indices + index_count);
 
-		// Order goes: TOP-LEFT -> TOP-RIGHT -> BOTTOM-RIGHT and then TOP-LEFT -> BOTTOM-RIGHT -> BOTTOM-LEFT
-		unsigned int xxxindices[] = {
-			0, 1, 5,
-			0, 5, 4,
-		
-			1, 2, 6,
-			1, 6, 5,
-		
-			2, 3, 7,
-			2, 7, 6,
-		
-			4, 5, 9,
-			4, 9, 8,
-
-			5, 6, 10,
-			5, 10, 9,
-
-			6, 7, 11,
-			6, 11, 10,
-
-			8, 9, 13,
-			8, 13, 12,
-
-			9, 10, 14,
-			9, 14, 13,
-
-			10, 11, 15, 
-			10, 15, 14
-		};
-
 		// Create VAO
 		glGenBuffers(1, &vao);
 		glBindVertexArray(vao);
@@ -122,6 +96,7 @@ public:
 		glGenBuffers(1, &ibo);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, x.size() * sizeof(uint), &x.front(), GL_STATIC_DRAW);
+		delete[] indices;
 
 		// Create VBO
 		glGenBuffers(1, &vbo);
@@ -165,9 +140,9 @@ public:
 		shader.UniformMat4x4("view", view_matrix);
 		shader.UniformMat4x4("model", model_matrix);
 
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, 0);
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
 	void OnUserEvent(terr::Event event) override {
@@ -196,7 +171,7 @@ private:
 
 int main() {
 	App app = App();
+	app.CreateWindow(1200, 700);
 
 	return 0;
 }
-

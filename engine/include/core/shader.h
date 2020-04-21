@@ -12,11 +12,13 @@ namespace terr {
 	class Shader {
 	public:
 		// Constructor
-		Shader(std::string vertex_file_path, std::string fragment_file_path);
+		Shader() { }
 		// Destructor
 		~Shader();
 
 		/* Public methods */
+
+		void CreateShader(std::string vertex_file_path, std::string fragment_file_path);
 
 		void Enable();
 		void Disable();
