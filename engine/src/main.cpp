@@ -31,6 +31,22 @@ struct uvec3 {
 	uint x, y, z;
 };
 
+
+class Terrain {
+	// Points, renderar
+	// Använder PerlinNoise klassen
+	// PerlinNoise.evaluate(x,y), z - noise value
+	// int Max-height
+};
+
+class Noise {
+
+};
+
+class PerlinNoise {
+
+};
+
 class App : public terr::TerrEngine {
 public:
 	App() {
@@ -38,7 +54,6 @@ public:
 	}
 
 	void OnUserStart() override {
-
 
 		shader.CreateShader("vertex.txt", "fragment.txt");
 
@@ -119,9 +134,8 @@ public:
 	}
 
 	void OnUserUpdate(float dt) override {
-		std::cout << dt << std::endl;
-		i++;
-		clearColor.r = sin(0.001f * i);
+
+
 	}
 
 	void OnUserRender() override {
