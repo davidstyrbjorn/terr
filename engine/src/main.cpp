@@ -1,5 +1,6 @@
  #include"../include/core/shader.h"
 #include"../include/core/engine.h"
+#include"../include/core/terrain.h"
 
 #include<iostream>
 #include <iomanip>
@@ -31,7 +32,6 @@ struct uvec3 {
 	uint x, y, z;
 };
 
-
 class Terrain {
 	// Points, renderar
 	// Använder PerlinNoise klassen
@@ -49,81 +49,15 @@ class PerlinNoise {
 
 class App : public terr::TerrEngine {
 public:
-	App() {
-
+	App() : terrain(32, 10) {
+		
 	}
 
 	void OnUserStart() override {
 
 		shader.CreateShader("vertex.txt", "fragment.txt");
 
-		const float S = 10.0f;
-		const int GRID_SQUARES = 64;
-
-		float freq = 0;
-
-		std::vector<vec3> points;
-		for (int z = 0; z < GRID_SQUARES; z++) {
-			for (int x = 0; x < GRID_SQUARES; x++) {
-
-				//freq = rand();
-				//float y = S * sin(freq);
-				float y = 0;
-				points.push_back({ S * (float)x, y, S * (float)z });
-			}
-		}
-
-		int squares_per_side = GRID_SQUARES - 1;
-		int no_squares = squares_per_side * squares_per_side;
-		index_count = no_squares * 6;
-
-		unsigned int* indices = new unsigned int[index_count];
-
-		int counter = 0;
-
-		int pointer = 0;
-		for (int i = 0; i < index_count; i++) {
-
-			int _temp = GRID_SQUARES + 1;
-
-			indices[i] = pointer; i += 1;
-			indices[i] = pointer + 1; i += 1;
-			indices[i] = pointer + _temp; i += 1;
-			indices[i] = pointer; i += 1;
-			indices[i] = pointer + _temp; i += 1;
-			indices[i] = pointer + (_temp-1);
-
-			counter++;
-
-			if (counter == GRID_SQUARES-1) {
-				pointer += 2;
-				counter = 0;
-			}
-			else {
-				pointer += 1;
-			}
-		}
-
-		std::vector<uint> x(indices, indices + index_count);
-
-		// Create VAO
-		glGenBuffers(1, &vao);
-		glBindVertexArray(vao);
-
-		// IBO
-		glGenBuffers(1, &ibo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, x.size() * sizeof(uint), &x.front(), GL_STATIC_DRAW);
-		delete[] indices;
-
-		// Create VBO
-		glGenBuffers(1, &vbo);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(vec3), &points.front(), GL_STATIC_DRAW);
-
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		terrain.ConstructTerrain();
 
 		// Projection
 		glm::mat4 proj = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.001f, 1000.0f);
@@ -160,7 +94,7 @@ public:
 		shader.UniformMat4x4("model", model_matrix);
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, 0);
+		terrain.RenderTerrain();
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
@@ -177,6 +111,7 @@ private:
 	unsigned int vbo = 0;
 	unsigned int ibo = 0;
 	terr::Shader shader;
+	terr::Terrain terrain;
 
 	glm::vec3 view_position;
 	glm::mat4 view_matrix;
