@@ -1,4 +1,5 @@
 #include "..\include\core\terrain.h"
+#include "..\include\core\noise\PerlinNoise.h"
 
 #define GLEW_STATIC
 #include<GL/glew.h>
@@ -24,10 +25,48 @@ terr::Terrain::~Terrain()
 void terr::Terrain::ConstructTerrain()
 {
 	std::vector<glm::vec3> points;
+	
+	int max_height = 10000;
+
+	int nOctaves = 9;
+	float* fOutput = new float[size * size];
+	float* fSeed = new float[size * size];
+	for (int i = 0; i < size * size; i++) fSeed[i] = (float)rand() / (float)RAND_MAX;
+
+	for (int x = 0; x < size; x++)
+		for (int y = 0; y < size; y++)
+		{
+			float fNoise = 0.0f;
+			float fScaleAcc = 0.0f;
+			float fScale = 1.0f;
+
+			for (int o = 0; o < nOctaves; o++)
+			{
+				int nPitch = size*size >> o;
+				int nSampleX1 = (x / nPitch) * nPitch;
+				int nSampleY1 = (y / nPitch) * nPitch;
+
+				int nSampleX2 = (nSampleX1 + nPitch) % size;
+				int nSampleY2 = (nSampleY1 + nPitch) % size;
+
+				float fBlendX = (float)(x - nSampleX1) / (float)nPitch;
+				float fBlendY = (float)(y - nSampleY1) / (float)nPitch;
+
+				float fSampleT = (1.0f - fBlendX) * fSeed[nSampleY1 * size + nSampleX1] + fBlendX * fSeed[nSampleY1 * size + nSampleX2];
+				float fSampleB = (1.0f - fBlendX) * fSeed[nSampleY2 * size + nSampleX1] + fBlendX * fSeed[nSampleY2 * size + nSampleX2];
+
+				fScaleAcc += fScale;
+				fNoise += (fBlendY * (fSampleB - fSampleT) + fSampleT) * fScale;
+				fScale = fScale / 2.0f; // /Fbias
+			}
+
+			// Scale to seed range
+			fOutput[y * size + x] = fNoise / fScaleAcc;
+		}
 
 	for (int z = 0; z < size; z++) {
 		for (int x = 0; x < size; x++) {
-			points.push_back({ scale * (float)x, 0, scale * (float)z });
+			points.push_back({ scale * (float)x, fOutput[x * size + z] * max_height, scale * (float)z });
 		}
 	}
 
