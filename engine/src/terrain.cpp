@@ -63,7 +63,7 @@ void terr::Terrain::ConstructTerrain()
 
 
 	std::vector<unsigned int> indices_vec(indices, indices + index_count);
-	delete indices;
+	delete[] indices;
 
 	// Create VAO
 	glGenBuffers(1, &vao);
