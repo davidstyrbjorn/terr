@@ -12,7 +12,6 @@ namespace terr {
 		void ConstructTerrain();
 		void RenderTerrain();
 
-	private:
 		int size;
 		float scale;
 		unsigned int vbo, ibo;

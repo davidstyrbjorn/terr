@@ -49,7 +49,7 @@ class PerlinNoise {
 
 class App : public terr::TerrEngine {
 public:
-	App() : terrain(32, 10) {
+	App() : terrain(32, 1) {
 		
 	}
 
@@ -92,6 +92,7 @@ public:
 
 		shader.UniformMat4x4("view", view_matrix);
 		shader.UniformMat4x4("model", model_matrix);
+		shader.UniformFloat("scale", terrain.scale); // Temporary
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		terrain.RenderTerrain();

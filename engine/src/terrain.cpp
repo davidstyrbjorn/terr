@@ -21,13 +21,16 @@ terr::Terrain::~Terrain()
 	glDeleteVertexArrays(1, &vao);
 }
 
+#include<iostream>
 void terr::Terrain::ConstructTerrain()
 {
 	std::vector<glm::vec3> points;
 
 	for (int z = 0; z < size; z++) {
 		for (int x = 0; x < size; x++) {
-			points.push_back({ scale * (float)x, 0, scale * (float)z });
+			float t = (float)rand() / RAND_MAX;
+			//std::cout << t << std::endl;
+			points.push_back({ scale * (float)x, t*scale, scale * (float)z });
 		}
 	}
 

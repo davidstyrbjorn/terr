@@ -107,6 +107,11 @@ void terr::Shader::UniformVec3(std::string name, const glm::vec3& vec)
 	glUniform3fv(GetUniformLocation(name), 1, glm::value_ptr(vec));
 }
 
+void terr::Shader::UniformFloat(std::string name, const float val)
+{
+	glUniform1f(GetUniformLocation(name), val);
+}
+
 uint terr::Shader::GetUniformLocation(std::string name)
 {
 	return glGetUniformLocation(program_id, name.c_str());
