@@ -59,7 +59,7 @@ public:
 		
 		shader.CreateShader("vertex.txt", "fragment.txt");
 
-		terrain.ConstructTerrain(100, 10);
+		terrain.ConstructTerrain(128, 10);
 
 		// Projection
 		glm::mat4 proj = glm::perspective(glm::radians(60.0f), 4.0f / 3.0f, 0.001f, 2000.0f);
@@ -84,8 +84,8 @@ public:
 			view_position.y -= 0.6f;
 		}
 
-		t = glfwGetTime();
-		terrain.UpdateTerrain(t);
+		//t = glfwGetTime();
+		//terrain.UpdateTerrain(t);
 
 	}
 

@@ -11,7 +11,9 @@ std::vector<float> terr::ApproxPerlinNoise::Generate(int nSize, int nOctaves, fl
 	
 
 	for (int i = 0; i < nSize * nSize; i++) fSeed.push_back((float)rand() / (float)RAND_MAX);
+
 	srand(time(NULL));
+
 	for (int x = 0; x < nSize; x++)
 		for (int y = 0; y < nSize; y++)
 		{
@@ -35,8 +37,8 @@ std::vector<float> terr::ApproxPerlinNoise::Generate(int nSize, int nOctaves, fl
 				float fSampleB = (1.0f - fBlendX) * fSeed[nSampleY2 * nSize + nSampleX1] + fBlendX * fSeed[nSampleY2 * nSize + nSampleX2];
 
 				fScaleAcc += fScale;
-				fNoise += (fBlendY * (fSampleB - fSampleT) + fSampleT) * fScale;
-				fScale = fScale / 2.0f; // /Fbias
+				fNoise += (fBlendY * (fSampleB - fSampleT) + (1 - fBlendY)*fSampleT) * fScale;
+				fScale = fScale / fBias; // /Fbias
 			}
 
 			// Scale to seed range

@@ -5,6 +5,8 @@
 
 #include<cmath>
 
+#include"../include/core/noise/approx_perlin_noise.h"
+
 terr::Terrain::Terrain() :
 	size(0), scale(0), vbo(0), ibo(0), vao(0), index_count(0)
 {
@@ -21,6 +23,8 @@ terr::Terrain::~Terrain()
 #include<iostream>
 void terr::Terrain::ConstructTerrain(int _size, float _scale)
 {
+	std::vector<float> perlinNoiseValues = ApproxPerlinNoise::Generate(_size, 9, 2.0f);
+
 	size = _size;
 	scale = _scale;
 
@@ -28,7 +32,9 @@ void terr::Terrain::ConstructTerrain(int _size, float _scale)
 		for (int x = 0; x < size; x++) {
 			float t = (float)rand() / RAND_MAX;
 			NodeData node;
-			node.pos = { scale * (float)x, t * scale, scale * (float)z };
+
+			node.pos = { scale * (float)x, scale * perlinNoiseValues[x + size*z], scale * (float)z };
+
 			node.freq = 2 * PI * t;
 			node.amplitude = 3 * t;
 			nodes.push_back(node);
