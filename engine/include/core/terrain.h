@@ -1,4 +1,4 @@
-#pragma once
+#include "..\include\core\noise\approx_perlin_noise.h"
 
 #include<vector>
 #include<glm/vec3.hpp>

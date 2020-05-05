@@ -56,16 +56,17 @@ public:
 	}
 
 	void OnUserStart() override {
-
+		
 		shader.CreateShader("vertex.txt", "fragment.txt");
 
 		terrain.ConstructTerrain(100, 10);
 
 		// Projection
-		glm::mat4 proj = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.001f, 1000.0f);
+		glm::mat4 proj = glm::perspective(glm::radians(60.0f), 4.0f / 3.0f, 0.001f, 2000.0f);
 		//glm::mat4 proj = glm::ortho(0.0f, 800.0f, 600.0f, 0.0f, -1.0f, 1.0f);
 		shader.Enable();
 		shader.UniformMat4x4("projection", proj);
+
 
 	}
 
