@@ -8,6 +8,8 @@
 #include"../include/imgui/imgui.h"
 #include"../include/imgui/imgui_impl_glfw_gl3.h"
 
+int terr::Window::KEYS[1028] = {};
+
 terr::Window::Window(int _width, int _height, std::string _title,
 	bool _fullScreen) : width(_width), height(_height)
 {
@@ -133,6 +135,8 @@ void terr::Window::key_callback(GLFWwindow* window, int key, int scancode, int a
 		_event.key = key;
 
 		terr_window->PollEvent(_event);
+
+		terr_window->KEYS[key] = 1;
 	}
 	else if (action == GLFW_RELEASE) {
 		terr::Event _event;
@@ -140,6 +144,8 @@ void terr::Window::key_callback(GLFWwindow* window, int key, int scancode, int a
 		_event.key = key;
 
 		terr_window->PollEvent(_event);
+
+		terr_window->KEYS[key] = 0;
 	}
 
 	// ImGui callbacks!

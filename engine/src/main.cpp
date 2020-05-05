@@ -11,6 +11,8 @@
 #define GLEW_STATIC
 #include<GL/glew.h>
 
+#include<GLFW/glfw3.h>
+
 #include <glm/vec3.hpp> // glm::vec3
 #include <glm/vec4.hpp> // glm::vec4, glm::ivec4
 #include <glm/mat4x4.hpp> // glm::mat4
@@ -49,7 +51,7 @@ class PerlinNoise {
 
 class App : public terr::TerrEngine {
 public:
-	App() : terrain(32, 1) {
+	App() : terrain() {
 		
 	}
 
@@ -57,7 +59,7 @@ public:
 
 		shader.CreateShader("vertex.txt", "fragment.txt");
 
-		terrain.ConstructTerrain();
+		terrain.ConstructTerrain(100, 10);
 
 		// Projection
 		glm::mat4 proj = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.001f, 1000.0f);
@@ -68,7 +70,21 @@ public:
 	}
 
 	void OnUserUpdate(float dt) override {
+		if (terr::Window::KEYS[TERR_KEY_D] == 1) {
+			view_position.x += 0.6f;
+		}
+		else if (terr::Window::KEYS[TERR_KEY_A] == 1) {
+			view_position.x -= 0.6f;
+		}
+		else if (terr::Window::KEYS[TERR_KEY_W] == 1) {
+			view_position.y += 0.6f;
+		}
+		else if (terr::Window::KEYS[TERR_KEY_S] == 1) {
+			view_position.y -= 0.6f;
+		}
 
+		t = glfwGetTime();
+		terrain.UpdateTerrain(t);
 
 	}
 
@@ -79,6 +95,7 @@ public:
 		ImGui::SliderFloat("View Zoom", &view_zoom, 1.0f, 10.0f);
 		ImGui::DragFloat3("View Position", &view_position[0]);
 		ImGui::DragFloat3("Model Position", &model_position[0]);
+		ImGui::DragFloat("t", &t, 0.01f);
 		ImGui::End();
 
 		// Upload some shit to the shader
@@ -100,7 +117,7 @@ public:
 	}
 
 	void OnUserEvent(terr::Event event) override {
-
+		
 	}
 
 	void OnUserExit() override {
@@ -121,13 +138,12 @@ private:
 	float view_x_rot = 0.0f;
 	float view_zoom = 1.0f;
 
-	int index_count;
-	int i = 0;
+	float t = 0;
 };
 
 int main() {
 	App app = App();
-	app.CreateWindow(1200, 700);
+	app.CreateWindow(1800, 900);
 
 	return 0;
 }
