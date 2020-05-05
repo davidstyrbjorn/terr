@@ -23,7 +23,7 @@ terr::Terrain::~Terrain()
 #include<iostream>
 void terr::Terrain::ConstructTerrain(int _size, float _scale)
 {
-	std::vector<float> perlinNoiseValues = ApproxPerlinNoise::Generate(_size, 9, 2.0f);
+	std::vector<float> perlinNoiseValues = ApproxPerlinNoise::Generate(_size, 8, 1.0f/10.0f);
 
 	size = _size;
 	scale = _scale;
@@ -33,7 +33,7 @@ void terr::Terrain::ConstructTerrain(int _size, float _scale)
 			float t = (float)rand() / RAND_MAX;
 			NodeData node;
 
-			node.pos = { scale * (float)x, scale * perlinNoiseValues[x + size*z], scale * (float)z };
+			node.pos = { scale * (float)x, scale * perlinNoiseValues[x + size * z], scale * (float)z };
 
 			node.freq = 2 * PI * t;
 			node.amplitude = 3 * t;
