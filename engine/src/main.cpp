@@ -64,11 +64,9 @@ public:
 		//glm::mat4 proj = glm::ortho(0.0f, 800.0f, 600.0f, 0.0f, -1.0f, 1.0f);
 		shader.Enable();
 		shader.UniformMat4x4("projection", proj);
-
 	}
 
 	void OnUserUpdate(float dt) override {
-
 
 	}
 
