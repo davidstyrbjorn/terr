@@ -11,6 +11,8 @@
 #define GLEW_STATIC
 #include<GL/glew.h>
 
+#include<GLFW/glfw3.h>
+
 #include <glm/vec3.hpp> // glm::vec3
 #include <glm/vec4.hpp> // glm::vec4, glm::ivec4
 #include <glm/mat4x4.hpp> // glm::mat4
@@ -49,25 +51,40 @@ class PerlinNoise {
 
 class App : public terr::TerrEngine {
 public:
-	App() : terrain(32, 10) {
+	App() : terrain() {
 		
 	}
 
 	void OnUserStart() override {
-
+		
 		shader.CreateShader("vertex.txt", "fragment.txt");
 
-		terrain.ConstructTerrain();
+		terrain.ConstructTerrain(128, 10);
 
 		// Projection
-		glm::mat4 proj = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.001f, 1000.0f);
+		glm::mat4 proj = glm::perspective(glm::radians(60.0f), 4.0f / 3.0f, 0.001f, 2000.0f);
 		//glm::mat4 proj = glm::ortho(0.0f, 800.0f, 600.0f, 0.0f, -1.0f, 1.0f);
 		shader.Enable();
 		shader.UniformMat4x4("projection", proj);
+
 	}
 
 	void OnUserUpdate(float dt) override {
+		if (terr::Window::KEYS[TERR_KEY_D] == 1) {
+			view_position.x += 0.6f;
+		}
+		else if (terr::Window::KEYS[TERR_KEY_A] == 1) {
+			view_position.x -= 0.6f;
+		}
+		else if (terr::Window::KEYS[TERR_KEY_W] == 1) {
+			view_position.y += 0.6f;
+		}
+		else if (terr::Window::KEYS[TERR_KEY_S] == 1) {
+			view_position.y -= 0.6f;
+		}
 
+		//t = glfwGetTime();
+		//terrain.UpdateTerrain(t);
 	}
 
 	void OnUserRender() override {
@@ -77,6 +94,7 @@ public:
 		ImGui::SliderFloat("View Zoom", &view_zoom, 1.0f, 10.0f);
 		ImGui::DragFloat3("View Position", &view_position[0]);
 		ImGui::DragFloat3("Model Position", &model_position[0]);
+		ImGui::DragFloat("t", &t, 0.01f);
 		ImGui::End();
 
 		// Upload some shit to the shader
@@ -90,6 +108,7 @@ public:
 
 		shader.UniformMat4x4("view", view_matrix);
 		shader.UniformMat4x4("model", model_matrix);
+		shader.UniformFloat("scale", terrain.scale); // Temporary
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		terrain.RenderTerrain();
@@ -97,7 +116,7 @@ public:
 	}
 
 	void OnUserEvent(terr::Event event) override {
-
+		
 	}
 
 	void OnUserExit() override {
@@ -118,13 +137,12 @@ private:
 	float view_x_rot = 0.0f;
 	float view_zoom = 1.0f;
 
-	int index_count;
-	int i = 0;
+	float t = 0;
 };
 
 int main() {
 	App app = App();
-	app.CreateWindow(1200, 700);
+	app.CreateWindow(1800, 900);
 
 	return 0;
 }

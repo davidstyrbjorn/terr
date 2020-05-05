@@ -3,13 +3,12 @@
 #define GLEW_STATIC
 #include<GL/glew.h>
 
-#include<glm/vec3.hpp>
-
-#include<vector>
 #include<cmath>
 
-terr::Terrain::Terrain(int _size, float _scale) :
-	size(_size), scale(_scale), vbo(0), ibo(0), vao(0), index_count(0)
+#include"../include/core/noise/approx_perlin_noise.h"
+
+terr::Terrain::Terrain() :
+	size(0), scale(0), vbo(0), ibo(0), vao(0), index_count(0)
 {
 
 }
@@ -21,13 +20,25 @@ terr::Terrain::~Terrain()
 	glDeleteVertexArrays(1, &vao);
 }
 
-void terr::Terrain::ConstructTerrain()
+#include<iostream>
+void terr::Terrain::ConstructTerrain(int _size, float _scale)
 {
-	std::vector<glm::vec3> points;
+	std::vector<float> perlinNoiseValues = ApproxPerlinNoise::Generate(_size, 9, 2.0f);
+
+	size = _size;
+	scale = _scale;
 
 	for (int z = 0; z < size; z++) {
 		for (int x = 0; x < size; x++) {
-			points.push_back({ scale * (float)x, 0, scale * (float)z });
+			float t = (float)rand() / RAND_MAX;
+			NodeData node;
+
+			node.pos = { scale * (float)x, scale * perlinNoiseValues[x + size*z], scale * (float)z };
+
+			node.freq = 2 * PI * t;
+			node.amplitude = 3 * t;
+			nodes.push_back(node);
+			starting_points.push_back(node.pos);
 		}
 	}
 
@@ -63,7 +74,7 @@ void terr::Terrain::ConstructTerrain()
 
 
 	std::vector<unsigned int> indices_vec(indices, indices + index_count);
-	delete indices;
+	delete[] indices;
 
 	// Create VAO
 	glGenBuffers(1, &vao);
@@ -77,11 +88,11 @@ void terr::Terrain::ConstructTerrain()
 	// Create VBO
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, points.size() * sizeof(glm::vec3), &points.front(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, nodes.size() * sizeof(NodeData), &nodes.front(), GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(NodeData), (void*)0);
 	
 
 }
@@ -91,4 +102,19 @@ void terr::Terrain::RenderTerrain()
 	//glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, 0);
 	//glBindVertexArray(0);
+}
+
+void terr::Terrain::UpdateTerrain(float t)
+{
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+	for (int i = 0; i < nodes.size(); i++) {
+		nodes[i].pos.y = starting_points[i].y * nodes[i].amplitude*cos(t*nodes[i].freq);
+	}
+
+	glBufferData(GL_ARRAY_BUFFER, nodes.size() * sizeof(NodeData), &nodes.front(), GL_STATIC_DRAW);
+
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

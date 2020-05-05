@@ -25,6 +25,7 @@ namespace terr {
 
 		void UniformMat4x4(std::string name, const glm::mat4x4& mat);
 		void UniformVec3(std::string name, const glm::vec3& vec);
+		void UniformFloat(std::string name, const float val);
 
 	private:
 		uint GetUniformLocation(std::string name);

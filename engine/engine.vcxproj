@@ -136,7 +136,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\PerlinNoise.cpp" />
+    <ClCompile Include="src\approx_perlin_noise.cpp" />
+    <ClCompile Include="src\noise.cpp" />
     <ClCompile Include="include\core\vec3.h" />
     <ClCompile Include="include\imgui\imgui.cpp" />
     <ClCompile Include="include\imgui\imgui_demo.cpp" />
@@ -162,7 +163,8 @@
     <ClInclude Include="include\core\color.h" />
     <ClInclude Include="include\core\engine.h" />
     <ClInclude Include="include\core\Input.h" />
-    <ClInclude Include="include\core\noise\PerlinNoise.h" />
+    <ClInclude Include="include\core\noise\approx_perlin_noise.h" />
+    <ClInclude Include="include\core\noise\noise.h" />
     <ClInclude Include="include\core\shader.h" />
     <ClInclude Include="include\core\terrain.h" />
     <ClInclude Include="include\core\vertex.h" />
