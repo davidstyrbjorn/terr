@@ -2,19 +2,14 @@
 #include <time.h>
 
 
-//nSize = 32, nOctaves = 9, fBias = 2.0f
-std::vector<float> terr::ApproxPerlinNoise::Generate(int nSize, int nOctaves, float fBias) {
-	
-	
-	std::vector<float> fOutput;
+terr::ApproxPerlinNoise::ApproxPerlinNoise(int nSize, int nOctaves, float fBias)
+{
+	std::vector<float> result;
 	std::vector<float> fSeed;
-	
-
-	
 
 	for (int i = 0; i < nSize * nSize; i++) fSeed.push_back((float)rand() / (float)RAND_MAX);
 	//fill with 0s
-	for (int i = 0; i < nSize * nSize; i++) fOutput.push_back(0);
+	for (int i = 0; i < nSize * nSize; i++) result.push_back(0);
 
 	for (int x = 0; x < nSize; x++) {
 		for (int y = 0; y < nSize; y++)
@@ -44,9 +39,14 @@ std::vector<float> terr::ApproxPerlinNoise::Generate(int nSize, int nOctaves, fl
 			}
 
 			// Scale to seed range
-			fOutput[y * nSize + x] = fNoise / fScaleAcc;
+			result[y * nSize + x] = fNoise / fScaleAcc;
 		}
 	}
 
-	return fOutput;
+	noise = result;
+}
+
+float terr::ApproxPerlinNoise::Evaluate(int x, int z, int size)
+{
+	return noise[x + size * z];
 }

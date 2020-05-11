@@ -6,7 +6,14 @@ namespace terr {
 	class ApproxPerlinNoise {
 
 	public:
-		static std::vector<float> Generate(int nSize, int nOctaves, float fBias);
+
+		ApproxPerlinNoise(int nSize, int nOctaves, float fBias);
+		
+		float Evaluate(int x, int z, int size);
+
+	private:
+		std::vector<float> noise;
+
 	};
 
 }
