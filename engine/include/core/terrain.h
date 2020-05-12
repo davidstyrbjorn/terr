@@ -7,8 +7,6 @@ namespace terr {
 	
 	struct NodeData {
 		glm::vec3 pos;
-		float freq = 2 * PI;
-		float amplitude = 1;
 	};
 
 	struct Vertex;
