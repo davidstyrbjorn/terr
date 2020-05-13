@@ -21,12 +21,13 @@ PerlinNoise3D::PerlinNoise3D() {
 		43,172,9,129,22,39,253, 19,98,108,110,79,113,224,232,178,185, 112,104,218,246,
 		97,228,251,34,242,193,238,210,144,12,191,179,162,241, 81,51,145,235,249,14,239,
 		107,49,192,214, 31,181,199,106,157,184, 84,204,176,115,121,50,45,127, 4,150,254,
-		138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180 };
+		138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180 
+	};
 
 	p.insert(p.end(), p.begin(), p.end());
 }
 
-PerlinNoise3D::PerlinNoise3D(uint seed) {
+void PerlinNoise3D::GeneratePermutationVector(uint seed) {
 	p.resize(256);
 
 	std::iota(p.begin(), p.end(), 0);
@@ -55,7 +56,7 @@ double PerlinNoise3D::grad(int hash, double x, double y, double z) {
 	return ((h & 1) == 0 ? u : -u) + ((h & 2) == 0 ? v : -v);
 }
 
-double PerlinNoise3D::noise(glm::vec3 pos) {
+double PerlinNoise3D::Evaluate(glm::vec3 pos) {
 	// Find the unit cube point
 	glm::vec3 POS;
 	POS.x = (int)floor(pos.x) & 255;
