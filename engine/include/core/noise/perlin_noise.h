@@ -13,14 +13,13 @@ namespace terr {
 
 	class PerlinNoise3D {
 	public:
-		// Init med reference värden för permutations vektorn/listan
 		PerlinNoise3D();
 
-		// Init med seed för att skapa permutations vektorn
-		PerlinNoise3D(uint seed);
+		// Generates the permutation vector, gets called by constructor
+		void GeneratePermutationVector(uint seed);
 
 		// Hämta noise värden 
-		double noise(glm::vec3 pos);
+		double Evaluate(glm::vec3 pos);
 
 	private:
 		double fade(double t);
