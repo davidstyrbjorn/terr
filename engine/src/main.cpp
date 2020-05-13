@@ -62,7 +62,7 @@ public:
 		camera.createCamera(0,0,0, window);
 		shader.CreateShader("vertex.txt", "fragment.txt");
 
-		terrain.ConstructTerrain(32, glm::ivec3(1,1,1), 0);
+		terrain.ConstructTerrain(128, glm::ivec3(10,10,10), 322);
 
 		// Projection matrix
 		glm::mat4 proj = glm::perspective(glm::radians(60.0f), 4.0f / 3.0f, 0.001f, 2000.0f);
@@ -75,17 +75,21 @@ public:
 
 	void OnUserUpdate(float dt) override {
 		// Update camera
-		//camera.Update(dt);
+		camera.Update(dt);
 	}
 
 	void OnUserRender() override {
+
+		ImGui::Begin("Bajs");
+		ImGui::DragFloat3("bajs", &camera.cam_pos[0]);
+		ImGui::End();
 
 		auto in_color = glm::vec3(sin(t*0.01), 1, 0);
 
 		// Send shit to the shader
 		shader.UniformVec3("scale", terrain.scale); // Temporary
 		shader.UniformVec3("in_color", in_color); // Sending color to fragment shader
-		shader.UniformMat4x4("view_matrix", camera.GetViewMatrix()); // Send the camera matrix
+		shader.UniformMat4x4("view", camera.GetViewMatrix()); // Send the camera matrix
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		terrain.RenderTerrain();
@@ -158,7 +162,7 @@ private:
 	terr::Shader shader;
 	terr::Terrain terrain;
 	terr::Camera camera;
-
+	glm::vec3 pos;
 };
 
 int main() {

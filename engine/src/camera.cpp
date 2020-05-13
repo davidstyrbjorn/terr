@@ -4,16 +4,22 @@
 void terr::Camera::createCamera(float x, float y, float z, terr::Window* _window)
 {
 	window = _window;
-	cam_pos = glm::vec3(150.0f, 150.0f, -150.0f);
+	cam_pos = glm::vec3(150.0f, 150.0f, 150.0f);
 	cam_front = glm::vec3(0.0f, 0.0f, -1.0f);
 	cam_up = glm::vec3(0.0f, 1.0f, 0.0f);
-	view_matrix = glm::translate(glm::mat4(1.0f), cam_pos);
+	view_matrix = glm::translate(glm::mat4(1.0f), -cam_pos);
 
 }
 
 glm::mat4& terr::Camera::GetViewMatrix()
 {
 	return view_matrix;
+}
+
+void terr::Camera::Update(float dt)
+{
+	// Translate the view matrix
+	view_matrix = glm::translate(glm::mat4(1.0f), -cam_pos);
 }
 
 void terr::Camera::Event(terr::Event event)

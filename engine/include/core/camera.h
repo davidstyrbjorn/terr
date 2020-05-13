@@ -16,7 +16,7 @@ namespace terr {
 		void Update(float dt);
 		void Event(terr::Event event);
 
-	private:
+	public:
 		terr::Window* window;
 		glm::mat4 view_matrix; // Manipulate this, view matrix is contains all the camera transformations
 		glm::vec3 cam_pos;
