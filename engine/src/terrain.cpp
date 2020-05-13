@@ -39,6 +39,7 @@ void terr::Terrain::ConstructTerrain(int _size, float _scale)
 			float temp = (float)x / size;
 			float temp2 = (float)z / size;
 			//std::cout << temp << std::endl;
+
 			double n = 20 * noise.noise({ temp*4, temp2*4, 3 });
 			//n = n - floor(n);
 			n = floor(255 * n);
