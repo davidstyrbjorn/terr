@@ -64,15 +64,15 @@ public:
 
 		terrain.ConstructTerrain(32, 10);
 
-		// Projection
+		// Projection matrix
 		glm::mat4 proj = glm::perspective(glm::radians(60.0f), 4.0f / 3.0f, 0.001f, 2000.0f);
 
 		shader.Enable();
 		shader.UniformMat4x4("projection", proj);
-
 	}
 
 	void OnUserUpdate(float dt) override {
+		// Update camera
 		camera.Update(dt);
 	}
 
@@ -81,17 +81,12 @@ public:
 		ImGui::Begin("test");
 		ImGui::End();
 
-		// Upload some shit to the shader
-		auto trans_view_matrix = glm::rotate(glm::mat4(1.0f), view_x_rot, glm::vec3(1, 0, 0));
-		auto scale_view_matrix = glm::scale(glm::mat4(1.0f), glm::vec3(view_zoom, view_zoom, 1));
-
 		auto in_color = glm::vec3(sin(t*0.01), 1, 0);
 
 		// Send shit to the shader
 		shader.UniformFloat("scale", terrain.scale); // Temporary
 		shader.UniformVec3("in_color", in_color); // Sending color to fragment shader
-		shader.UniformMat4x4("view_matrix", camera.GetViewMatrix());
-
+		shader.UniformMat4x4("view_matrix", camera.GetViewMatrix()); // Send the camera matrix
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		terrain.RenderTerrain();
@@ -99,6 +94,7 @@ public:
 	}
 
 	void OnUserEvent(terr::Event event) override {
+		// Send event to camera
 		camera.Event(event);
 	}
 
@@ -107,24 +103,14 @@ public:
 	}
 
 private:
-	unsigned int vao = 0;
-	unsigned int vbo = 0;
-	unsigned int ibo = 0;
 	terr::Shader shader;
 	terr::Terrain terrain;
 	terr::Camera camera;
-
-	glm::vec3 view_position;
-	glm::vec3 model_position;
-	float view_x_rot = 0.0f;
-	float view_zoom = 1.0f;
-
-	float t = 0;
 };
 
 int main() {
 	App app = App();
-	app.CreateWindow(1800, 900);
+	app.CreateWindow(1200, 800);
 
 	return 0;
 }
