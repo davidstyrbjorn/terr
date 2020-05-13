@@ -39,7 +39,7 @@ struct uvec3 {
 
 class Terrain {
 	// Points, renderar
-	// Anvï¿½nder PerlinNoise klassen
+	// Använder PerlinNoise klassen
 	// PerlinNoise.evaluate(x,y), z - noise value
 	// int Max-height
 };
@@ -64,7 +64,7 @@ public:
 
 		terrain.ConstructTerrain(32, glm::ivec3(1,1,1), 0);
 
-		// Projection
+		// Projection matrix
 		glm::mat4 proj = glm::perspective(glm::radians(60.0f), 4.0f / 3.0f, 0.001f, 2000.0f);
 
 		shader.Enable();
@@ -85,8 +85,7 @@ public:
 		// Send shit to the shader
 		shader.UniformVec3("scale", terrain.scale); // Temporary
 		shader.UniformVec3("in_color", in_color); // Sending color to fragment shader
-		shader.UniformMat4x4("view_matrix", camera.GetViewMatrix());
-
+		shader.UniformMat4x4("view_matrix", camera.GetViewMatrix()); // Send the camera matrix
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		terrain.RenderTerrain();
@@ -105,7 +104,7 @@ public:
 	void SetupImGuiStyle() {
 		ImGuiStyle& style = ImGui::GetStyle();
 
-		// light style from Pacï¿½me Danhiez (user itamago) https://github.com/ocornut/imgui/pull/511#issuecomment-175719267
+		// light style from Pacôme Danhiez (user itamago) https://github.com/ocornut/imgui/pull/511#issuecomment-175719267
 		style.Alpha = 1.0f;
 		style.FrameRounding = 3.0f;
 		style.WindowRounding = 0.0f;
@@ -156,27 +155,15 @@ public:
 	}
 
 private:
-	unsigned int vao = 0;
-	unsigned int vbo = 0;
-	unsigned int ibo = 0;
 	terr::Shader shader;
 	terr::Terrain terrain;
 	terr::Camera camera;
 
-<<<<<<< HEAD
-=======
-	glm::vec3 view_position;
-	glm::vec3 model_position;
-	float view_x_rot = 0.0f;
-	float view_zoom = 1.0f;
-
-	float t = 0;
->>>>>>> parent of 20c3f1a... Resting on the pillow of time
 };
 
 int main() {
 	App app = App();
-	app.CreateWindow(1800, 900);
+	app.CreateWindow(1200, 800);
 
 
 
