@@ -24,6 +24,8 @@
 #define PI 3.14159265359f
 #define DEG2RAD(x) (x*180.0f)/PI
 
+int t = 0;
+
 typedef unsigned int uint;
 
 struct vec3 {
@@ -89,6 +91,8 @@ public:
 
 	void OnUserRender() override {
 
+		t++;//for color atm
+
 		ImGui::Begin("test");
 		ImGui::SliderAngle("View Rotation X", &view_x_rot);
 		ImGui::SliderFloat("View Zoom", &view_zoom, 1.0f, 10.0f);
@@ -102,6 +106,8 @@ public:
 		auto rot_view_matrix = glm::translate(glm::mat4(1.0f), -view_position);
 		auto scale_view_matrix = glm::scale(glm::mat4(1.0f), glm::vec3(view_zoom, view_zoom, 1));
 
+		auto in_color = glm::vec3(sin(t*0.01), 1, 0);
+		
 		model_matrix = glm::translate(glm::mat4(1.0f), model_position);
 
 		view_matrix = scale_view_matrix * trans_view_matrix * rot_view_matrix;
@@ -109,6 +115,9 @@ public:
 		shader.UniformMat4x4("view", view_matrix);
 		shader.UniformMat4x4("model", model_matrix);
 		shader.UniformFloat("scale", terrain.scale); // Temporary
+		
+		shader.UniformVec3("in_color", in_color);//sending color to fragment shader
+		
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		terrain.RenderTerrain();
