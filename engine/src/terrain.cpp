@@ -29,8 +29,7 @@ void terr::Terrain::ConstructTerrain(int _size, glm::vec<3, int> _scale, uint se
 	//ApproxPerlinNoise perlinNoiseValues = ApproxPerlinNoise(_size, 8, 1.0f/10.0f);
 
 	// Create perlin noise object
-	if (seed != -1)
-		perlin_noise.GeneratePermutationVector(seed);
+	perlin_noise.GeneratePermutationVector(100);
 	std::vector<float> list;
 
 	scale = _scale;
@@ -38,7 +37,6 @@ void terr::Terrain::ConstructTerrain(int _size, glm::vec<3, int> _scale, uint se
 
 	for (int z = 0; z < size; z++) {
 		for (int x = 0; x < size; x++) {
-			float t = (float)rand() / RAND_MAX;
 			NodeData node;
 
 			float temp = (float)x / size;
@@ -50,7 +48,7 @@ void terr::Terrain::ConstructTerrain(int _size, glm::vec<3, int> _scale, uint se
 			n = floor(255 * n);
 			list.push_back(n);
 
-			node.pos = { scale.x * (float)x, n*scale.y, scale.z * (float)z };
+			node.pos = { scale.x * (float)x, 0, scale.y * (float)z };
 
 			nodes.push_back(node);
 			starting_points.push_back(node.pos);
@@ -62,43 +60,7 @@ void terr::Terrain::ConstructTerrain(int _size, glm::vec<3, int> _scale, uint se
 	glBindVertexArray(vao);
 
 	// Generates IBO
-	int squares_per_side = size - 1;
-	int no_squares = std::pow(squares_per_side, 2);
-
-	index_count = no_squares * 6; // 3 indices per triangle, 2 triangles per square
-
-	unsigned int* indices = new unsigned int[index_count];
-	int counter = 0; // Used in the index generation
-	int pointer = 0; // ------||------
-
-	for (int i = 0; i < index_count; i++) {
-		int _temp = size + 1;
-
-		indices[i] = pointer; i += 1;
-		indices[i] = pointer + 1; i += 1;
-		indices[i] = pointer + _temp; i += 1;
-		indices[i] = pointer; i += 1;
-		indices[i] = pointer + _temp; i += 1;
-		indices[i] = pointer + (_temp - 1);
-
-		counter++;
-
-		if (counter == size - 1) {
-			pointer += 2;
-			counter = 0;
-		}
-		else {
-			pointer += 1;
-		}
-	}
-
-	std::vector<unsigned int> indices_vec(indices, indices + index_count);
-	delete[] indices;
-
-	// IBO
-	glGenBuffers(1, &ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_vec.size() * sizeof(unsigned int), &indices_vec.front(), GL_STATIC_DRAW);
+	GenerateIndiciesBuffer();
 
 	// Create VBO
 	glGenBuffers(1, &vbo);
@@ -114,24 +76,24 @@ void terr::Terrain::RenderTerrain()
 {
 	/* GENERATEN SOME IMGUI THINGIES */ 
 	ImGui::Begin("Terrain Window");
-
+	
 	// Scale input as a vec3
 	ImGui::InputInt3("Scale", &scale[0]);
-
+	
 	// Seed input as unsigned integer
 	int temp = (int)seed;
 	ImGui::InputInt("Seed", &temp);
 	seed = (uint)temp;
-
+	
 	// Buttons for various actions
 	if(ImGui::Button("Generate")) {
-
+	
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Random Seed")) {
-
+	
 	}
-
+	
 	ImGui::End();
 
 	//glBindVertexArray(vao);

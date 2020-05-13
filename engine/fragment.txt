@@ -12,7 +12,7 @@ void main(){
 
 	//color = in_color;
 
-	color = vec3(1, 1, 1);
+	color = vec3(1,0,0);
 
 	//color = vec3(pos.y/255.0, pos.y/255.0, pos.y/255.0);
 	
