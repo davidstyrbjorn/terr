@@ -150,6 +150,7 @@
     <ClCompile Include="src\debug_log.cpp" />
     <ClCompile Include="src\engine.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\perlin_noise.cpp" />
     <ClCompile Include="src\shader.cpp" />
     <ClCompile Include="src\terrain.cpp" />
     <ClCompile Include="src\vec3.cpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="include\core\Input.h" />
     <ClInclude Include="include\core\noise\approx_perlin_noise.h" />
     <ClInclude Include="include\core\noise\noise.h" />
+    <ClInclude Include="include\core\noise\perlin_noise.h" />
     <ClInclude Include="include\core\shader.h" />
     <ClInclude Include="include\core\terrain.h" />
     <ClInclude Include="include\core\vertex.h" />

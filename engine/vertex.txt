@@ -7,6 +7,7 @@ uniform mat4 model = mat4(1.0);
 uniform mat4 view = mat4(1.0);
 uniform mat4 projection = mat4(1.0);
 
+
 uniform float screenWidth = 800;
 #define PI 3.14159265358979323846
 
@@ -15,7 +16,6 @@ float rand(vec2 c){
 }
 
 vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
-
 
 
 float snoise(vec2 v){
@@ -45,13 +45,9 @@ float snoise(vec2 v){
   return 130.0 * dot(m, g);
 }
 
-
-
 out vec3 pos;
 
 void main(){
 	pos = position.xyz;
-    float y = snoise(pos.xz);
-    pos = vec3(position.x, y*10, position.z);
 	gl_Position = projection * view * model * vec4(pos.xyz, 1.0);
 }

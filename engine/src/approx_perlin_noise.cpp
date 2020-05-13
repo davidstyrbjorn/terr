@@ -1,20 +1,17 @@
 #include "../include/core/noise/approx_perlin_noise.h"
 #include <time.h>
 
-//nSize = 32, nOctaves = 9, fBias = 2.0f
-std::vector<float> terr::ApproxPerlinNoise::Generate(int nSize, int nOctaves, float fBias) {
-	
-	
-	std::vector<float> fOutput;
+
+terr::ApproxPerlinNoise::ApproxPerlinNoise(int nSize, int nOctaves, float fBias)
+{
+	std::vector<float> result;
 	std::vector<float> fSeed;
 
-	
-
 	for (int i = 0; i < nSize * nSize; i++) fSeed.push_back((float)rand() / (float)RAND_MAX);
+	//fill with 0s
+	for (int i = 0; i < nSize * nSize; i++) result.push_back(0);
 
-	srand(time(NULL));
-
-	for (int x = 0; x < nSize; x++)
+	for (int x = 0; x < nSize; x++) {
 		for (int y = 0; y < nSize; y++)
 		{
 			float fNoise = 0.0f;
@@ -23,7 +20,7 @@ std::vector<float> terr::ApproxPerlinNoise::Generate(int nSize, int nOctaves, fl
 
 			for (int o = 0; o < nOctaves; o++)
 			{
-				int nPitch = nSize * nSize >> o;
+				int nPitch = nSize >> o;
 				int nSampleX1 = (x / nPitch) * nPitch;
 				int nSampleY1 = (y / nPitch) * nPitch;
 
@@ -37,13 +34,19 @@ std::vector<float> terr::ApproxPerlinNoise::Generate(int nSize, int nOctaves, fl
 				float fSampleB = (1.0f - fBlendX) * fSeed[nSampleY2 * nSize + nSampleX1] + fBlendX * fSeed[nSampleY2 * nSize + nSampleX2];
 
 				fScaleAcc += fScale;
-				fNoise += (fBlendY * (fSampleB - fSampleT) + (1 - fBlendY)*fSampleT) * fScale;
+				fNoise += (fBlendY * (fSampleB - fSampleT) + (1 - fBlendY) * fSampleT) * fScale;
 				fScale = fScale / fBias; // /Fbias
 			}
 
 			// Scale to seed range
-			fOutput.push_back(fNoise / fScaleAcc);
+			result[y * nSize + x] = fNoise / fScaleAcc;
 		}
+	}
 
-	return fOutput;
+	noise = result;
+}
+
+float terr::ApproxPerlinNoise::Evaluate(int x, int z, int size)
+{
+	return noise[x + size * z];
 }

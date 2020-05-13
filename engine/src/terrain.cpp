@@ -6,6 +6,7 @@
 #include<cmath>
 
 #include"../include/core/noise/approx_perlin_noise.h"
+#include"../include/core/noise/perlin_noise.h"
 
 terr::Terrain::Terrain() :
 	size(0), scale(0), vbo(0), ibo(0), vao(0), index_count(0)
@@ -23,7 +24,9 @@ terr::Terrain::~Terrain()
 #include<iostream>
 void terr::Terrain::ConstructTerrain(int _size, float _scale)
 {
-	std::vector<float> perlinNoiseValues = ApproxPerlinNoise::Generate(_size, 9, 2.0f);
+	//ApproxPerlinNoise perlinNoiseValues = ApproxPerlinNoise(_size, 8, 1.0f/10.0f);
+	PerlinNoise3D noise = PerlinNoise3D();
+	std::vector<float> list;
 
 	size = _size;
 	scale = _scale;
@@ -33,10 +36,16 @@ void terr::Terrain::ConstructTerrain(int _size, float _scale)
 			float t = (float)rand() / RAND_MAX;
 			NodeData node;
 
-			node.pos = { scale * (float)x, scale * perlinNoiseValues[x + size*z], scale * (float)z };
+			float temp = (float)x / size;
+			float temp2 = (float)z / size;
+			//std::cout << temp << std::endl;
+			double n = 20 * noise.noise({ temp, temp2, 0.8 });
+			n = n - floor(n);
+			n = floor(255 * n);
+			list.push_back(n);
 
-			node.freq = 2 * PI * t;
-			node.amplitude = 3 * t;
+			node.pos = { scale * (float)x, n/20.0f, scale * (float)z };
+
 			nodes.push_back(node);
 			starting_points.push_back(node.pos);
 		}
@@ -106,15 +115,5 @@ void terr::Terrain::RenderTerrain()
 
 void terr::Terrain::UpdateTerrain(float t)
 {
-	glBindVertexArray(vao);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-	for (int i = 0; i < nodes.size(); i++) {
-		nodes[i].pos.y = starting_points[i].y * nodes[i].amplitude*cos(t*nodes[i].freq);
-	}
-
-	glBufferData(GL_ARRAY_BUFFER, nodes.size() * sizeof(NodeData), &nodes.front(), GL_STATIC_DRAW);
-
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
