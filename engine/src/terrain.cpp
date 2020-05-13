@@ -40,10 +40,13 @@ void terr::Terrain::ConstructTerrain(int _size, float _scale)
 			float temp = (float)x / size;
 			float temp2 = (float)z / size;
 			//std::cout << temp << std::endl;
-			double n = noise.noise({ temp, temp2, 0.2f });
+
+			double n = 20 * noise.noise({ temp*4, temp2*4, 3 });
+			//n = n - floor(n);
+			n = floor(255 * n);
 			list.push_back(n);
 
-			node.pos = { scale * (float)x, scale*n, scale * (float)z };
+			node.pos = { scale * (float)x, n/10.0f, scale * (float)z };
 
 			nodes.push_back(node);
 			starting_points.push_back(node.pos);
