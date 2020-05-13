@@ -55,6 +55,7 @@ terr::Window::Window(int _width, int _height, std::string _title,
 	glfwSetKeyCallback(glfw_window, key_callback);
 	glfwSetScrollCallback(glfw_window, scroll_callback);
 	glfwSetCharCallback(glfw_window, character_callback);
+	glfwSetCursorPosCallback(glfw_window, cursor_position_callback);
 
 	// Mainly so that we can get Window class in the callback functions!
 	glfwSetWindowUserPointer(glfw_window, this);
@@ -189,4 +190,11 @@ void terr::Window::character_callback(GLFWwindow* window, unsigned int codepoint
 {
 	// ImGui callbacks!
 	ImGui_ImplGlfwGL3_CharCallback(window, codepoint);
+}
+
+void terr::Window::cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	static terr::Window* terr_window = static_cast<terr::Window*>(glfwGetWindowUserPointer(window));
+	terr_window->mouse_x = xpos;
+	terr_window->mouse_y = ypos;
 }

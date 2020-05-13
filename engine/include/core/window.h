@@ -32,6 +32,7 @@ namespace terr {
 		static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 		static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 		static void character_callback(GLFWwindow* window, unsigned int codepoint);
+		static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
 
 	public:
 		int width, height;
@@ -39,6 +40,8 @@ namespace terr {
 		GLFWwindow* glfw_window;
 		GLFWmonitor* glfw_monitor;
 		std::vector<Event> event_queu;
+
+		float mouse_x, mouse_y;
 
 		static int KEYS[1028];
 	};
