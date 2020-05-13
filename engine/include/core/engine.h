@@ -26,8 +26,10 @@ namespace terr {
 		virtual void OnUserEvent(terr::Event event) = 0;
 		terr::Color clearColor;
 
-	private:
 		terr::Window* window = nullptr;
+
+	private:
+		
 		terr::Clock deltaClock;
 		
 	};

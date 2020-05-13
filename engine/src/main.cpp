@@ -59,7 +59,7 @@ public:
 	}
 
 	void OnUserStart() override {
-		
+		camera.createCamera(0,0,0, window);
 		shader.CreateShader("vertex.txt", "fragment.txt");
 
 		terrain.ConstructTerrain(32, 10);
@@ -73,7 +73,7 @@ public:
 
 	void OnUserUpdate(float dt) override {
 		// Update camera
-		camera.Update(dt);
+		//camera.Update(dt);
 	}
 
 	void OnUserRender() override {
@@ -95,7 +95,7 @@ public:
 
 	void OnUserEvent(terr::Event event) override {
 		// Send event to camera
-		camera.Event(event);
+		//camera.Event(event);
 	}
 
 	void OnUserExit() override {
@@ -106,11 +106,14 @@ private:
 	terr::Shader shader;
 	terr::Terrain terrain;
 	terr::Camera camera;
+
 };
 
 int main() {
 	App app = App();
 	app.CreateWindow(1200, 800);
+
+
 
 	return 0;
 }
