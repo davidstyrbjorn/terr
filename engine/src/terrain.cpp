@@ -8,6 +8,7 @@
 #include"../include/core/noise/approx_perlin_noise.h"
 #include"../include/core/noise/perlin_noise.h"
 
+
 terr::Terrain::Terrain() :
 	size(0), scale(0), vbo(0), ibo(0), vao(0), index_count(0)
 {
@@ -50,6 +51,38 @@ void terr::Terrain::ConstructTerrain(int _size, float _scale)
 		}
 	}
 
+	// Create VAO
+	glGenBuffers(1, &vao);
+	glBindVertexArray(vao);
+
+	GenerateIndiciesBuffer();
+
+	// Create VBO
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, nodes.size() * sizeof(NodeData), &nodes.front(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(NodeData), (void*)0);
+	
+
+}
+
+void terr::Terrain::RenderTerrain()
+{
+	//glBindVertexArray(vao);
+	glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, 0);
+	//glBindVertexArray(0);
+}
+
+void terr::Terrain::UpdateTerrain(float t)
+{
+
+}
+
+void terr::Terrain::GenerateIndiciesBuffer()
+{
 	int squares_per_side = size - 1;
 	int no_squares = std::pow(squares_per_side, 2);
 
@@ -80,39 +113,11 @@ void terr::Terrain::ConstructTerrain(int _size, float _scale)
 		}
 	}
 
-
 	std::vector<unsigned int> indices_vec(indices, indices + index_count);
 	delete[] indices;
-
-	// Create VAO
-	glGenBuffers(1, &vao);
-	glBindVertexArray(vao);
 
 	// IBO
 	glGenBuffers(1, &ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_vec.size() * sizeof(unsigned int), &indices_vec.front(), GL_STATIC_DRAW);
-
-	// Create VBO
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, nodes.size() * sizeof(NodeData), &nodes.front(), GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(NodeData), (void*)0);
-	
-
-}
-
-void terr::Terrain::RenderTerrain()
-{
-	//glBindVertexArray(vao);
-	glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, 0);
-	//glBindVertexArray(0);
-}
-
-void terr::Terrain::UpdateTerrain(float t)
-{
-
 }

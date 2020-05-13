@@ -12,6 +12,10 @@ namespace terr {
 	struct Vertex;
 
 	class Terrain {
+	private:
+		// Helper methods
+		void GenerateIndiciesBuffer();
+
 	public:
 		Terrain();
 		~Terrain();

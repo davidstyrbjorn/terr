@@ -124,6 +124,11 @@ std::vector<terr::Event>& terr::Window::GetEvents()
 	return event_queu;
 }
 
+bool terr::Window::IsKeyDown(int key)
+{
+	return KEYS[key];
+}
+
 /* INPUT RELATED FUNCTIONS!!! */
 
 void terr::Window::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
