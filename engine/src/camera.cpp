@@ -1,4 +1,5 @@
 #include"../include/core/camera.h"
+#include<glm/gtc/matrix_transform.hpp>
 
 void terr::Camera::createCamera(float x, float y, float z, terr::Window* _window)
 {
