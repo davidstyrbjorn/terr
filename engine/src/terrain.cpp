@@ -44,9 +44,7 @@ void terr::Terrain::ConstructTerrain(int _size, float _scale)
 			//n = n - floor(n);
 			n = floor(255 * n);
 			list.push_back(n);
-
 			node.pos = { scale * (float)x, n/10.0f, scale * (float)z };
-
 			nodes.push_back(node);
 			starting_points.push_back(node.pos);
 		}

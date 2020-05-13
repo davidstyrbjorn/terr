@@ -2,6 +2,7 @@
 
 #include<glm/mat4x4.hpp>
 #include"../core/Input.h"
+#include"../core/window.h"
 
 namespace terr {
 
@@ -14,6 +15,8 @@ namespace terr {
 
 	private:
 		glm::mat4 view_matrix; // Manipulate this, view matrix is contains all the camera transformations
+		glm::vec3 cam_pos;
+		terr::Window window;
 	};
 
 }
