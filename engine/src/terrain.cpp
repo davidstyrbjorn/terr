@@ -47,10 +47,21 @@ void terr::Terrain::ConstructTerrain(int _size, glm::vec<3, int> _scale, uint se
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(NodeData), (void*)0);
+
+	//glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//glBindVertexArray(0);
+	// WE DO NOT UNBIND IBO!!! IT IS TIED HARD TO THE VAO
 }
 
 void terr::Terrain::RenderTerrain()
 {
+	//glBindVertexArray(terrain.vao);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+	//glBindVertexArray(vao);
+	glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, (const void*)0);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	//glBindVertexArray(0);
+
 	/* GENERATEN SOME IMGUI THINGIES */ 
 	ImGui::Begin("Terrain Window");
 	
@@ -113,10 +124,7 @@ void terr::Terrain::RenderTerrain()
 	
 	ImGui::End();
 
-	//glBindVertexArray(vao);
-	glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, 0);
-	//glBindVertexArray(0);
-}
+}						
 
 void terr::Terrain::UpdateTerrain(float t)
 {

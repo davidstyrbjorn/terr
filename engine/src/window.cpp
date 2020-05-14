@@ -56,6 +56,7 @@ terr::Window::Window(int _width, int _height, std::string _title,
 	glfwSetScrollCallback(glfw_window, scroll_callback);
 	glfwSetCharCallback(glfw_window, character_callback);
 	glfwSetCursorPosCallback(glfw_window, cursor_position_callback);
+	glfwSetMouseButtonCallback(glfw_window, mouse_button_callback);
 
 	// Mainly so that we can get Window class in the callback functions!
 	glfwSetWindowUserPointer(glfw_window, this);

@@ -146,6 +146,19 @@ namespace terr {
 #define TERR_KEY_RIGHT_SUPER        347
 #define TERR_KEY_MENU               348
 
+#define TERR_MOUSE_BUTTON_1         0
+#define TERR_MOUSE_BUTTON_2         1
+#define TERR_MOUSE_BUTTON_3         2
+#define TERR_MOUSE_BUTTON_4         3
+#define TERR_MOUSE_BUTTON_5         4
+#define TERR_MOUSE_BUTTON_6         5
+#define TERR_MOUSE_BUTTON_7         6
+#define TERR_MOUSE_BUTTON_8         7
+#define TERR_MOUSE_BUTTON_LAST      TERR_MOUSE_BUTTON_8
+#define TERR_MOUSE_BUTTON_LEFT      TERR_MOUSE_BUTTON_1
+#define TERR_MOUSE_BUTTON_RIGHT     TERR_MOUSE_BUTTON_2
+#define TERR_MOUSE_BUTTON_MIDDLE    TERR_MOUSE_BUTTON_3
+
 #define TERR_KEY_LAST               TERR_KEY_MENU
 
 }

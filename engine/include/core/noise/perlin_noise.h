@@ -29,4 +29,12 @@ namespace terr {
 		std::vector<uint> p;
 	};
 
+	class PerlinNoise2D {
+
+	};
+
+	class PerlinNoise1D {
+
+	};
+
 }

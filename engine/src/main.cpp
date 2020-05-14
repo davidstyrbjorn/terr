@@ -2,6 +2,7 @@
 #include"../include/core/engine.h"
 #include"../include/core/terrain.h"
 #include"../include/core/camera.h"
+#include"../include/core/skybox.h"
 
 #include<iostream>
 #include <iomanip>
@@ -25,32 +26,7 @@
 #define PI 3.14159265359f
 #define DEG2RAD(x) (x*180.0f)/PI
 
-int t = 0;
-
 typedef unsigned int uint;
-
-struct vec3 {
-	float x, y, z;
-};
-
-struct uvec3 {
-	uint x, y, z;
-};
-
-class Terrain {
-	// Points, renderar
-	// Anv�nder PerlinNoise klassen
-	// PerlinNoise.evaluate(x,y), z - noise value
-	// int Max-height
-};
-
-class Noise {
-
-};
-
-class PerlinNoise {
-
-};
 
 class App : public terr::TerrEngine {
 public:
@@ -62,6 +38,7 @@ public:
 		camera.createCamera(0,0,0, window);
 		shader.CreateShader("vertex.txt", "fragment.txt");
 
+		//skybox.CreateSkybox();
 		terrain.ConstructTerrain(32, glm::ivec3(10,50,10), 322);
 
 		// Projection matrix
@@ -69,6 +46,8 @@ public:
 
 		shader.Enable();
 		shader.UniformMat4x4("projection", proj);
+
+		clearColor = terr::Color(0.3f, 0.3f, 1.0f);
 
 		SetupImGuiStyle();
 	}
@@ -81,15 +60,8 @@ public:
 
 	void OnUserRender() override {
 
-		ImGui::Begin("Temporary Camera Controller");
-		ImGui::DragFloat3("position", &camera.cam_pos[0]);
-		ImGui::End();
-
-		auto in_color = glm::vec3(sin(t*0.01), 1, 0);
-
 		// Send shit to the shader
 		shader.UniformVec3("scale", terrain.scale); // Temporary
-		shader.UniformVec3("in_color", in_color); // Sending color to fragment shader
 		shader.UniformMat4x4("view", camera.GetViewMatrix()); // Send the camera matrix
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -100,7 +72,6 @@ public:
 	void OnUserEvent(terr::Event event) override {
 		// Send event to camera
 		camera.Event(event);
-		std::cout << event.button;
 	}
 
 	void OnUserExit() override {
@@ -164,14 +135,13 @@ private:
 	terr::Shader shader;
 	terr::Terrain terrain;
 	terr::Camera camera;
+	terr::Skybox skybox;
 	glm::vec3 pos;
 };
 
 int main() {
 	App app = App();
 	app.CreateWindow(1200, 800);
-
-
 
 	return 0;
 }

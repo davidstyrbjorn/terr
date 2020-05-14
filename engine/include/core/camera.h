@@ -37,6 +37,8 @@ namespace terr {
 		float mov_speed;
 		float mouse_sens;
 		float zoom;
+		// other
+		bool lookingAround = false;
 
 	};
 
