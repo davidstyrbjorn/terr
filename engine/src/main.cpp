@@ -76,6 +76,8 @@ public:
 	void OnUserUpdate(float dt) override {
 		// Update camera
 		camera.Update(dt);
+		//camera.getFOV();
+
 	}
 
 	void OnUserRender() override {
@@ -98,7 +100,8 @@ public:
 
 	void OnUserEvent(terr::Event event) override {
 		// Send event to camera
-		//camera.Event(event);
+		camera.Event(event);
+		std::cout << event.button;
 	}
 
 	void OnUserExit() override {
