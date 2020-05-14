@@ -62,7 +62,7 @@ public:
 		camera.createCamera(0,0,0, window);
 		shader.CreateShader("vertex.txt", "fragment.txt");
 
-		terrain.ConstructTerrain(128, glm::ivec3(10,10,10), 322);
+		terrain.ConstructTerrain(32, glm::ivec3(10,50,10), 322);
 
 		// Projection matrix
 		glm::mat4 proj = glm::perspective(glm::radians(60.0f), 4.0f / 3.0f, 0.001f, 2000.0f);
@@ -76,12 +76,13 @@ public:
 	void OnUserUpdate(float dt) override {
 		// Update camera
 		camera.Update(dt);
+		terrain.UpdateTerrain(dt);
 	}
 
 	void OnUserRender() override {
 
-		ImGui::Begin("Bajs");
-		ImGui::DragFloat3("bajs", &camera.cam_pos[0]);
+		ImGui::Begin("Temporary Camera Controller");
+		ImGui::DragFloat3("position", &camera.cam_pos[0]);
 		ImGui::End();
 
 		auto in_color = glm::vec3(sin(t*0.01), 1, 0);
@@ -132,7 +133,7 @@ public:
 		style.Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.41f, 0.41f, 0.41f, 1.00f);
 		style.Colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.51f, 0.51f, 0.51f, 1.00f);
 		style.Colors[ImGuiCol_ComboBg] = ImVec4(0.14f, 0.14f, 0.14f, 0.99f);
-		style.Colors[ImGuiCol_CheckMark] = ImVec4(0.73f, 0.00f, 0.00f, 1.00f);
+		style.Colors[ImGuiCol_CheckMark] = ImVec4(0.60f, 0.60f, 0.60f, 1.00f);
 		style.Colors[ImGuiCol_SliderGrab] = ImVec4(0.43f, 0.00f, 0.00f, 1.00f);
 		style.Colors[ImGuiCol_SliderGrabActive] = ImVec4(0.73f, 0.00f, 0.00f, 1.00f);
 		style.Colors[ImGuiCol_Button] = ImVec4(0.44f, 0.00f, 0.00f, 0.40f);

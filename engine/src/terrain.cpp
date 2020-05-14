@@ -4,6 +4,7 @@
 #include<GL/glew.h>
 
 #include<cmath>
+#include<time.h>
 
 #include"../include/core/noise/approx_perlin_noise.h"
 #include"../include/core/noise/perlin_noise.h"
@@ -26,48 +27,24 @@ terr::Terrain::~Terrain()
 #include<iostream>
 void terr::Terrain::ConstructTerrain(int _size, glm::vec<3, int> _scale, uint seed)
 {
-	//ApproxPerlinNoise perlinNoiseValues = ApproxPerlinNoise(_size, 8, 1.0f/10.0f);
-
-	// Create perlin noise object
-	perlin_noise.GeneratePermutationVector(100);
-	std::vector<float> list;
-
 	scale = _scale;
 	size = _size;
 
-	for (int z = 0; z < size; z++) {
-		for (int x = 0; x < size; x++) {
-			NodeData node;
-
-			float temp = (float)x / size;
-			float temp2 = (float)z / size;
-			//std::cout << temp << std::endl;
-
-			double n = perlin_noise.Evaluate({ temp*4, temp2*4, 3 });
-			//n = n - floor(n);
-			n = floor(255 * n);
-			list.push_back(n);
-
-			node.pos = { scale.x * (float)x, 0, scale.y * (float)z };
-
-			nodes.push_back(node);
-			starting_points.push_back(node.pos);
-		}
-	}
+	// Fills the nodes list correctly
+	UpdateNodes();
 
 	// Create VAO
 	glGenBuffers(1, &vao);
 	glBindVertexArray(vao);
 
 	// Generates IBO
-	GenerateIndiciesBuffer();
+	glGenBuffers(1, &ibo);
+	UpdateIndicesBuffer();
 
 	// Create VBO
 	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, nodes.size() * sizeof(NodeData), &nodes.front(), GL_STATIC_DRAW);
+	UpdateVertexBuffer();
 
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(NodeData), (void*)0);
 }
@@ -77,21 +54,61 @@ void terr::Terrain::RenderTerrain()
 	/* GENERATEN SOME IMGUI THINGIES */ 
 	ImGui::Begin("Terrain Window");
 	
+	ImGui::Text("Grid Data");
 	// Scale input as a vec3
 	ImGui::InputInt3("Scale", &scale[0]);
-	
+	// Grid size
+	ImGui::InputInt("Grid Size", &size);
+
+	ImGui::Spacing();
+	ImGui::Separator();
+	ImGui::Spacing();
+
+	ImGui::Text("Perlin Noise Data");
 	// Seed input as unsigned integer
 	int temp = (int)seed;
-	ImGui::InputInt("Seed", &temp);
+	ImGui::DragInt("Seed", &temp, 0);
 	seed = (uint)temp;
-	
-	// Buttons for various actions
-	if(ImGui::Button("Generate")) {
-	
+	// Frequency
+	ImGui::DragFloat("Frequency", &frequency, 0.1f, 0.001f);
+	// Z position
+	ImGui::DragFloat("Noise Z", &noise_z, 0.1f, 0.0f);
+
+	ImGui::Spacing();
+	ImGui::Separator();
+	ImGui::Spacing();
+
+	ImGui::Checkbox("Animate", &isAnimating);
+
+	if (isAnimating) {
+		ImGui::Text("Animation Data");
+		ImGui::Checkbox("Animate Frequency", &animatingFrequency);
+
+		ImGui::DragFloat("Freq animation interval", &freqAnimInterval, 0.1f, 0.1f);
+		if (ImGui::IsItemHovered()) {
+			ImGui::BeginTooltip();
+			ImGui::SetTooltip("Animate the frequnecy between -interval to + interval");
+			ImGui::EndTooltip();
+		}
+		ImGui::DragFloat("Freq animation speed", &freqAnimSpeed, 0.1f, 0.01f);
+
+		ImGui::Checkbox("Animate Noise Z", &animatingNoiseZ);
+		ImGui::DragFloat("Noise Z animation interval", &noiseZAnimInterval, 0.1f, 0.1f);
+		ImGui::DragFloat("Noise Z animation speed", &noiseZAnimSpeed, 0.1f, 0.1f);
 	}
-	ImGui::SameLine();
-	if (ImGui::Button("Random Seed")) {
-	
+
+	if (!isAnimating) {
+		// Buttons for various actions
+		if (ImGui::Button("Generate")) {
+			UpdateNodes();
+			UpdateIndicesBuffer();
+			UpdateVertexBuffer();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Random Seed")) {
+			srand(time(NULL));
+			seed = static_cast<uint>(rand());
+		}
 	}
 	
 	ImGui::End();
@@ -103,10 +120,22 @@ void terr::Terrain::RenderTerrain()
 
 void terr::Terrain::UpdateTerrain(float t)
 {
+	if (isAnimating) {
+		animTicker += 0.1f * t;
+		if (animatingFrequency) {
+			frequency = sin(animTicker * freqAnimSpeed) * freqAnimInterval;
+		}
+		if (animatingNoiseZ) {
+			noise_z = std::pow((sin(animTicker * noiseZAnimSpeed / 2)), 2) * noiseZAnimInterval;
+		}
 
+		UpdateNodes();
+		UpdateVertexBuffer();
+
+	}
 }
 
-void terr::Terrain::GenerateIndiciesBuffer()
+void terr::Terrain::UpdateIndicesBuffer()
 {
 	int squares_per_side = size - 1;
 	int no_squares = std::pow(squares_per_side, 2);
@@ -141,8 +170,47 @@ void terr::Terrain::GenerateIndiciesBuffer()
 	std::vector<unsigned int> indices_vec(indices, indices + index_count);
 	delete[] indices;
 
-	// IBO
-	glGenBuffers(1, &ibo);
+	// Update the IBO
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_vec.size() * sizeof(unsigned int), &indices_vec.front(), GL_STATIC_DRAW);
+}
+
+void terr::Terrain::UpdateVertexBuffer()
+{
+	for (int i = 0; i < index_count; i += 3) {
+
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, nodes.size() * sizeof(NodeData), &nodes.front(), GL_STATIC_DRAW);
+}
+
+void terr::Terrain::UpdateNodes()
+{
+	// Create perlin noise object
+	perlin_noise.GeneratePermutationVector(seed);
+	std::vector<float> list;
+
+	nodes.clear();
+	starting_points.clear();
+
+	for (int z = 0; z < size; z++) {
+		for (int x = 0; x < size; x++) {
+			NodeData node;
+
+			// Normalize the values for the noise evalations
+			float norm_x = (float)x / size;
+			float norm_y = (float)z / size;
+
+			double n = perlin_noise.Evaluate({ norm_x * frequency, norm_y * frequency, noise_z });
+			//n = n - floor(n);
+			n = floor(255 * n) / 255.0f;
+			list.push_back(n);
+
+			node.pos = { scale.x * (float)x, scale.y * n, scale.z * (float)z };
+
+			nodes.push_back(node);
+			starting_points.push_back(node.pos);
+		}
+	}
 }
