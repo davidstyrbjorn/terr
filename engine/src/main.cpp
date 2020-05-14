@@ -39,7 +39,7 @@ struct uvec3 {
 
 class Terrain {
 	// Points, renderar
-	// Använder PerlinNoise klassen
+	// Anvï¿½nder PerlinNoise klassen
 	// PerlinNoise.evaluate(x,y), z - noise value
 	// int Max-height
 };
@@ -99,7 +99,8 @@ public:
 
 	void OnUserEvent(terr::Event event) override {
 		// Send event to camera
-		//camera.Event(event);
+		camera.Event(event);
+		std::cout << event.button;
 	}
 
 	void OnUserExit() override {
@@ -109,7 +110,7 @@ public:
 	void SetupImGuiStyle() {
 		ImGuiStyle& style = ImGui::GetStyle();
 
-		// light style from Pacôme Danhiez (user itamago) https://github.com/ocornut/imgui/pull/511#issuecomment-175719267
+		// light style from Pacï¿½me Danhiez (user itamago) https://github.com/ocornut/imgui/pull/511#issuecomment-175719267
 		style.Alpha = 1.0f;
 		style.FrameRounding = 3.0f;
 		style.WindowRounding = 0.0f;
