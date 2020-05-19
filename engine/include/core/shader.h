@@ -27,6 +27,7 @@ namespace terr {
 		void UniformVec3(std::string name, const glm::vec3& vec);
 		void UniformFloat(std::string name, const float val);
 		void UniformInt(std::string name, const int val);
+		void UniformVec3Array(std::string name, glm::vec3* array);
 
 	private:
 		uint GetUniformLocation(std::string name);
