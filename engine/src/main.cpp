@@ -1,4 +1,4 @@
- #include"../include/core/shader.h"
+#include"../include/core/shader.h"
 #include"../include/core/engine.h"
 #include"../include/core/terrain.h"
 #include"../include/core/camera.h"
@@ -31,24 +31,25 @@ typedef unsigned int uint;
 class App : public terr::TerrEngine {
 public:
 	App() : terrain() {
-		
+
 	}
 
 	void OnUserStart() override {
-		camera.createCamera(0,0,0, window);
+		camera.createCamera(0, 0, 0, window);
 		shader.CreateShader("vertex.txt", "fragment.txt");
-		skyboxShader.CreateShader("skybox_vertex.txt", "skybox_fragment.txt");
 
-		skybox.CreateSkybox();
-		terrain.ConstructTerrain(32, glm::ivec3(10,50,10), 322);
+		//skybox.CreateSkybox();
+		terrain.ConstructTerrain(32, glm::ivec3(10, 50, 10), 322);
 
 		// Projection matrix
-		proj = glm::perspective(glm::radians(60.0f), 4.0f / 3.0f, 0.001f, 2000.0f);
+		glm::mat4 proj = glm::perspective(glm::radians(60.0f), 4.0f / 3.0f, 0.001f, 2000.0f);
+
+
 
 		shader.Enable();
 		shader.UniformMat4x4("projection", proj);
 
-		clearColor = terr::Color(0.3f, 0.3f, 1.0f);
+		clearColor = terr::Color(0, 0, 0);
 
 		SetupImGuiStyle();
 	}
@@ -62,31 +63,32 @@ public:
 	void OnUserRender() override {
 
 		// Send shit to the shader
+		shader.UniformVec3("scale", terrain.scale); // Temporary
+		shader.UniformMat4x4("view", camera.GetViewMatrix()); // Send the camera matrix
 
-		//shader.Enable();
-		//shader.UniformVec3("scale", terrain.scale); // Temporary
-		//shader.UniformMat4x4("view", camera.GetViewMatrix()); // Send the camera matrix
-		
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		//terrain.RenderTerrain();
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		//Temporary colors
+		glm::vec3 colors[] = {
+		glm::vec3(-3.5f,  4.0f, -4.0f),
+		glm::vec3(0.0f,  4.0f, -4.0f),
+		glm::vec3(3.5f,  4.0f, -4.0f),
+		glm::vec3(-3.5f,  4.0f, 0.0f),
+		glm::vec3(0.0f,  4.0f, 0.0f),
+		glm::vec3(3.5f,  4.0f, 0.0f),
+		glm::vec3(-3.5f,  4.0f, 4.0f),
+		glm::vec3(0.0f,  4.0f, 4.0f),
+		glm::vec3(3.5f,  4.0f, 4.0f)
+		};
 
-		//glDepthFunc(GL_EQUAL);
-		//
-		//skyboxShader.Enable();
-		//skyboxShader.UniformInt("skybox", 0);
-		//glm::mat4 skyboxView = glm::mat4(glm::mat3(camera.GetViewMatrix())); // Remove any translations from the skybox view matrix
-		//skyboxShader.UniformMat4x4("view", skyboxView);
-		//skyboxShader.UniformMat4x4("projection", proj);
-		//
-		//glBindVertexArray(skybox.vao);
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.textureID);
-		//
-		//glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.textureID);
-		//glDrawArrays(GL_TRIANGLES, 0, 36);
-		//
-		//glDepthFunc(GL_LESS);
+		//Send colors to fragment
+		shader.UniformFloat("terr_max", terrain.max);
+		shader.UniformFloat("terr_min", terrain.min);
+
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		//glCullFace(GL_FRONT_AND_BACK);
+		terrain.RenderTerrain();
+		//glCullFace(GL_FRONT_AND_BACK);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
 	void OnUserEvent(terr::Event event) override {
@@ -95,7 +97,7 @@ public:
 	}
 
 	void OnUserExit() override {
-	
+
 	}
 
 	void SetupImGuiStyle() {
@@ -153,11 +155,10 @@ public:
 
 private:
 	terr::Shader shader;
-	terr::Shader skyboxShader;
 	terr::Terrain terrain;
 	terr::Camera camera;
-	terr::Skybox skybox;
-	glm::mat4 proj;
+	//terr::Skybox skybox;
+	glm::vec3 pos;
 };
 
 int main() {
