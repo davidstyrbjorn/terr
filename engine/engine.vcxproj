@@ -153,6 +153,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\perlin_noise.cpp" />
     <ClCompile Include="src\shader.cpp" />
+    <ClCompile Include="src\skybox.cpp" />
     <ClCompile Include="src\terrain.cpp" />
     <ClCompile Include="src\vec3.cpp" />
     <ClCompile Include="src\window.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="include\core\noise\noise.h" />
     <ClInclude Include="include\core\noise\perlin_noise.h" />
     <ClInclude Include="include\core\shader.h" />
+    <ClInclude Include="include\core\skybox.h" />
     <ClInclude Include="include\core\terrain.h" />
     <ClInclude Include="include\core\vertex.h" />
     <ClInclude Include="include\core\window.h" />
@@ -181,10 +183,6 @@
     <ClInclude Include="include\imgui\stb_rect_pack.h" />
     <ClInclude Include="include\imgui\stb_textedit.h" />
     <ClInclude Include="include\imgui\stb_truetype.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="fragment.txt" />
-    <Text Include="vertex.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,49 +1,20 @@
 #version 330 core
 
-uniform vec3 scale;
+uniform float scale;
 
-uniform vec3 in_color1;
-uniform vec3 in_color2;
-
-uniform float terr_max;
-uniform float terr_min;
-
+uniform vec3 in_color;
 
 in vec3 pos;
 
 out vec3 color;
 
-
-
-vec3 Gradient(float position, vec3 color1,vec3 color2,vec3 color3,vec3 color4,vec3 color5, float s,float min){
-	if(position > 4*s+min){
-	float mPct = smoothstep(5*s+2*min, 4*s+min, position);
-	 return mix(color1,color2,mPct);
-	}
-	else if(position > 3*s+min){
-		float mPct = smoothstep(4*s+2*min, 3*s+min, position);
-	 return mix(color2,color3,mPct);
-	}
-	else if(position > 2*s+min){
-		float mPct = smoothstep(3*s+min, 2*s+min, position);
-	 return mix(color3,color4,mPct);
-	}
-	else if(position > 1*s+min){
-		float mPct = smoothstep(2*s+min, 1*s+min, position);
-	 return mix(color4,color5,mPct);
-	}
-	else{
-	 return color5;
-	}
-}
-
 void main(){
-	vec3 color1 = vec3(155/255f, 174/255f, 191/255f);
-	vec3 color2 = vec3(206/255f, 225/255f, 242/255f);
-	vec3 color3 = vec3(26/255f, 38/255f, 20/255f);
-	vec3 color4 = vec3(62/255f, 89/255f, 34/255f);
-	vec3 color5 = vec3(85/255f, 115/255f, 41/255f);
 
-	float new_scale = scale.y*(terr_max-terr_min)/5;
-	color = Gradient(pos.y,color2,color1,color3,color4,color5,new_scale,terr_min);
-	}
+	//color = in_color;
+
+	color = vec3(1,0,0);
+
+	//color = vec3(pos.y/255.0, pos.y/255.0, pos.y/255.0);
+	
+
+}

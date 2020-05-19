@@ -5,7 +5,6 @@
 
 #include<cmath>
 #include<time.h>
-#include<algorithm>
 
 #include"../include/core/noise/approx_perlin_noise.h"
 #include"../include/core/noise/perlin_noise.h"
@@ -222,6 +221,4 @@ void terr::Terrain::UpdateNodes()
 			starting_points.push_back(node.pos);
 		}
 	}
-	max = *std::max_element(list.begin(), list.end());
-	min = *std::min_element(list.begin(), list.end());
 }
