@@ -44,10 +44,12 @@ public:
 		// Projection matrix
 		glm::mat4 proj = glm::perspective(glm::radians(60.0f), 4.0f / 3.0f, 0.001f, 2000.0f);
 
+		
+
 		shader.Enable();
 		shader.UniformMat4x4("projection", proj);
 
-		clearColor = terr::Color(0.3f, 0.3f, 1.0f);
+		clearColor = terr::Color(0, 0, 0);
 
 		SetupImGuiStyle();
 	}
@@ -63,9 +65,29 @@ public:
 		// Send shit to the shader
 		shader.UniformVec3("scale", terrain.scale); // Temporary
 		shader.UniformMat4x4("view", camera.GetViewMatrix()); // Send the camera matrix
+		
+		//Temporary colors
+		glm::vec3 colors[] = {
+		glm::vec3(-3.5f,  4.0f, -4.0f),
+		glm::vec3(0.0f,  4.0f, -4.0f),
+		glm::vec3(3.5f,  4.0f, -4.0f),
+		glm::vec3(-3.5f,  4.0f, 0.0f),
+		glm::vec3(0.0f,  4.0f, 0.0f),
+		glm::vec3(3.5f,  4.0f, 0.0f),
+		glm::vec3(-3.5f,  4.0f, 4.0f),
+		glm::vec3(0.0f,  4.0f, 4.0f),
+		glm::vec3(3.5f,  4.0f, 4.0f)
+		};
+
+		//Send colors to fragment
+		shader.UniformFloat("terr_max", terrain.max);
+		shader.UniformFloat("terr_min", terrain.min);
+		
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		//glCullFace(GL_FRONT_AND_BACK);
 		terrain.RenderTerrain();
+		//glCullFace(GL_FRONT_AND_BACK);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
@@ -135,7 +157,7 @@ private:
 	terr::Shader shader;
 	terr::Terrain terrain;
 	terr::Camera camera;
-	terr::Skybox skybox;
+	//terr::Skybox skybox;
 	glm::vec3 pos;
 };
 

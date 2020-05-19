@@ -42,6 +42,8 @@ namespace terr {
 		PerlinNoise3D perlin_noise;
 		float frequency = 1.0f;
 		float noise_z = 0.0f;
+		float max;
+		float min;
 
 		// Terrain animation info
 		bool isAnimating = false;
