@@ -59,6 +59,35 @@ void terr::Camera::Update(float dt)
         cam_pos -= cam_up * velocity;
     }
 
+	float what = 50.0f;
+	if (window->IsKeyDown(TERR_KEY_L)) {
+		yaw += what * dt;
+	}
+	if (window->IsKeyDown(TERR_KEY_J)) {
+		yaw -= what * dt;
+	}
+	if (window->IsKeyDown(TERR_KEY_I)) {
+		pitch -= what * dt;
+	}
+	if (window->IsKeyDown(TERR_KEY_K)) {
+		pitch += what * dt;
+	}
+
+	if (pitch > 89.0f)
+		pitch = 89.0f;
+	if (pitch < -89.0f)
+		pitch = -89.0f;
+
+	glm::vec3 direction;
+	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+	direction.y = sin(glm::radians(-pitch));
+	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+	cam_front = glm::normalize(direction);
+
+	//re-calculate the Right and Up vector
+	cam_right = glm::normalize(glm::cross(cam_front, world_up));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
+	cam_up = glm::normalize(glm::cross(cam_right, cam_front));
+
     // Rotates camera with mouse
 	if (lookingAround) {
 		if (last_mouse_pos_x != window->mouse_x || last_mouse_pos_y != window->mouse_y) {

@@ -112,6 +112,11 @@ void terr::Shader::UniformFloat(std::string name, const float val)
 	glUniform1f(GetUniformLocation(name), val);
 }
 
+void terr::Shader::UniformInt(std::string name, const int val)
+{
+	glUniform1i(GetUniformLocation(name), val);
+}
+
 uint terr::Shader::GetUniformLocation(std::string name)
 {
 	return glGetUniformLocation(program_id, name.c_str());

@@ -83,8 +83,8 @@ void terr::Window::Clear(Color color) {
 	ImGui_ImplGlfwGL3_NewFrame();
 
 	// Clear the color and depth buffer 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(color.r, color.g, color.b, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void terr::Window::Display() {

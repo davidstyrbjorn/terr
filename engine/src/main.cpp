@@ -37,12 +37,13 @@ public:
 	void OnUserStart() override {
 		camera.createCamera(0,0,0, window);
 		shader.CreateShader("vertex.txt", "fragment.txt");
+		skyboxShader.CreateShader("skybox_vertex.txt", "skybox_fragment.txt");
 
-		//skybox.CreateSkybox();
+		skybox.CreateSkybox();
 		terrain.ConstructTerrain(32, glm::ivec3(10,50,10), 322);
 
 		// Projection matrix
-		glm::mat4 proj = glm::perspective(glm::radians(60.0f), 4.0f / 3.0f, 0.001f, 2000.0f);
+		proj = glm::perspective(glm::radians(60.0f), 4.0f / 3.0f, 0.001f, 2000.0f);
 
 		shader.Enable();
 		shader.UniformMat4x4("projection", proj);
@@ -61,12 +62,31 @@ public:
 	void OnUserRender() override {
 
 		// Send shit to the shader
-		shader.UniformVec3("scale", terrain.scale); // Temporary
-		shader.UniformMat4x4("view", camera.GetViewMatrix()); // Send the camera matrix
 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		terrain.RenderTerrain();
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		//shader.Enable();
+		//shader.UniformVec3("scale", terrain.scale); // Temporary
+		//shader.UniformMat4x4("view", camera.GetViewMatrix()); // Send the camera matrix
+		
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		//terrain.RenderTerrain();
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+		//glDepthFunc(GL_EQUAL);
+		//
+		//skyboxShader.Enable();
+		//skyboxShader.UniformInt("skybox", 0);
+		//glm::mat4 skyboxView = glm::mat4(glm::mat3(camera.GetViewMatrix())); // Remove any translations from the skybox view matrix
+		//skyboxShader.UniformMat4x4("view", skyboxView);
+		//skyboxShader.UniformMat4x4("projection", proj);
+		//
+		//glBindVertexArray(skybox.vao);
+		//glActiveTexture(GL_TEXTURE0);
+		//glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.textureID);
+		//
+		//glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.textureID);
+		//glDrawArrays(GL_TRIANGLES, 0, 36);
+		//
+		//glDepthFunc(GL_LESS);
 	}
 
 	void OnUserEvent(terr::Event event) override {
@@ -133,10 +153,11 @@ public:
 
 private:
 	terr::Shader shader;
+	terr::Shader skyboxShader;
 	terr::Terrain terrain;
 	terr::Camera camera;
 	terr::Skybox skybox;
-	glm::vec3 pos;
+	glm::mat4 proj;
 };
 
 int main() {
