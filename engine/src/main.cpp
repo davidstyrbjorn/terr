@@ -49,7 +49,7 @@ public:
 		shader.Enable();
 		shader.UniformMat4x4("projection", proj);
 
-		clearColor = terr::Color(0, 0, 0);
+		clearColor = terr::Color(0, 0.5, 0.9);
 
 		SetupImGuiStyle();
 	}
@@ -68,23 +68,21 @@ public:
 
 		//Temporary colors
 		glm::vec3 colors[] = {
-		glm::vec3(-3.5f,  4.0f, -4.0f),
-		glm::vec3(0.0f,  4.0f, -4.0f),
-		glm::vec3(3.5f,  4.0f, -4.0f),
-		glm::vec3(-3.5f,  4.0f, 0.0f),
-		glm::vec3(0.0f,  4.0f, 0.0f),
-		glm::vec3(3.5f,  4.0f, 0.0f),
-		glm::vec3(-3.5f,  4.0f, 4.0f),
-		glm::vec3(0.0f,  4.0f, 4.0f),
-		glm::vec3(3.5f,  4.0f, 4.0f)
+		glm::vec3(206 / 255.0f, 225 / 255.0f, 242 / 255.0f),
+		glm::vec3(155 / 255.0f, 174 / 255.0f, 191 / 255.0f),
+		glm::vec3(26 / 255.0f, 38 / 255.0f, 20 / 255.0f),
+		glm::vec3(62 / 255.0f, 89 / 255.0f, 34 / 255.0f),
+		glm::vec3(85 / 255.0f, 115 / 255.0f, 41 / 255.0f)
 		};
+		
 
 		//Send colors to fragment
 		shader.UniformFloat("terr_max", terrain.max);
 		shader.UniformFloat("terr_min", terrain.min);
+		shader.UniformVec3Array("colors",colors);
+		shader.UniformFloat("size_of_array", sizeof(colors));
 
-
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		//glCullFace(GL_FRONT_AND_BACK);
 		terrain.RenderTerrain();
 		//glCullFace(GL_FRONT_AND_BACK);
