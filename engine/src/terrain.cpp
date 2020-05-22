@@ -19,9 +19,18 @@ static void NodeNormal(terr::NodeData& node, const terr::NodeData& node1, const 
 }
 
 terr::Terrain::Terrain() :
-	size(0), scale(0), vbo(0), ibo(0), vao(0), index_count(0)
+	size(0), scale(0), vbo(0), ibo(0), vao(0), index_count(0), gradient_color_count(3)
 {
-
+	gradient_colors = {
+		glm::vec3(242 / 256.0f, 211 / 256.0f, 153 / 256.0f),
+		glm::vec3(89 / 256.0f,68 / 256.0f, 49 / 256.0f),
+		glm::vec3(166 / 256.0f,87 / 256.0f, 41 / 256.0f),
+		glm::vec3(192 / 256.0f,222 / 256.0f, 136 / 256.0f),
+		glm::vec3(92 / 256.0f,163 / 256.0f, 111 / 256.0f),
+		glm::vec3(38 / 256.0f,91 / 256.0f,64 / 256.0f),
+		glm::vec3(15 / 256.0f,62 / 256.0f,57 / 256.0f),
+		glm::vec3(13 / 256.0f,33 / 256.0f,39 / 256.0f)
+	};
 }
 
 terr::Terrain::~Terrain()
@@ -97,6 +106,19 @@ void terr::Terrain::RenderTerrain()
 	ImGui::DragFloat("Noise Z", &noise_z, 0.1f, 0.0f);
 	// Wireframe
 	ImGui::Checkbox("Wireframe", &wireFrameOn);
+
+	ImGui::Spacing();
+	ImGui::Separator();
+	ImGui::Spacing();
+
+	ImGui::Text("Terrain Color");
+	static bool selected[8] = { true, false, false, false, false, false, false, false };
+	ImGui::DragInt("Gradient Count", &gradient_color_count, 1, 2, 8, "%.f");
+	for (int i = 0; i < gradient_color_count; i++) {
+		ImGui::PushID(i);
+		ImGui::ColorEdit3("", &gradient_colors.at(i)[0]);
+		ImGui::PopID();
+	}
 
 	ImGui::Spacing();
 	ImGui::Separator();
@@ -246,7 +268,6 @@ void terr::Terrain::UpdateNodes()
 		// We're on the last row
 		counter1++;
 		if (i >= size*size - size) {
-			std::cout << i << std::endl;
 			// Last node on the column
 			if (counter1 == size) {
 				counter1 = 0;

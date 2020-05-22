@@ -67,25 +67,10 @@ public:
 		shader.UniformVec3("lightPos", lightPos);
 		shader.UniformVec3("lightColor", lightColor);
 
-		//Temporary colors
-		glm::vec3 colors[] = {
-		glm::vec3(242/256.0f, 211/256.0f, 153 / 256.0f),
-		glm::vec3(89 / 256.0f,68 / 256.0f, 49 / 256.0f),
-		glm::vec3(166 / 256.0f,87 / 256.0f, 41 / 256.0f),
-		glm::vec3(192 / 256.0f,222 / 256.0f, 136 / 256.0f),
-		glm::vec3(92 / 256.0f,163 / 256.0f, 111 / 256.0f),
-		glm::vec3(38 / 256.0f,91 / 256.0f,64 / 256.0f),
-		glm::vec3(15 / 256.0f,62 / 256.0f,57 / 256.0f),
-		glm::vec3(13 / 256.0f,33 / 256.0f,39 / 256.0f)
-		};
-		int array_size = 8;// Behöver ändras beroende på storlek av array
-							//Kan vi få in denna i uniformvec3Array?
-		
-
 		//Send colors to fragment
 		
-		shader.UniformVec3Array("colors",colors);
-		shader.UniformFloat("size_of_array", array_size); //sizeof() returns byte size of vec3 array
+		shader.UniformVec3Array("colors", &terrain.gradient_colors[0]);
+		shader.UniformFloat("size_of_array", terrain.gradient_color_count); //sizeof() returns byte size of vec3 array
 
 		terrain.RenderTerrain();
 

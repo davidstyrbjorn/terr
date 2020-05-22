@@ -46,6 +46,8 @@ namespace terr {
 		float max;
 		float min;
 		bool wireFrameOn = false;
+		std::vector<glm::vec3> gradient_colors;
+		int gradient_color_count = 8;
 
 		// Terrain animation info
 		bool isAnimating = false;

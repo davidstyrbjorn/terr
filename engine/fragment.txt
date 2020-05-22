@@ -1,4 +1,5 @@
 #version 330 core
+
 #define MAX 100
 uniform vec3 scale;
 
@@ -11,52 +12,10 @@ in vec3 norm;
 
 out vec3 color;
 
-vec3 Gradient(float position, vec3 color1,vec3 color2,vec3 color3,vec3 color4,vec3 color5, float s,float min){
-	if(position > 4*s+min){
-	float mPct = smoothstep(5*s+2*min, 4*s+min, position);
-	 return mix(color1,color2,mPct);
-	}
-	else if(position > 3*s+min){
-		float mPct = smoothstep(4*s+2*min, 3*s+min, position);
-	 return mix(color2,color3,mPct);
-	}
-	else if(position > 2*s+min){
-		float mPct = smoothstep(3*s+min, 2*s+min, position);
-	 return mix(color3,color4,mPct);
-	}
-	else if(position > 1*s+min){
-		float mPct = smoothstep(2*s+min, 1*s+min, position);
-	 return mix(color4,color5,mPct);
-	}
-	else{
-	 return color5;
-	}
-}
-*/
-
 uniform vec3 lightColor = vec3(1, 0, 0);
 float lightIntensity = 1.0;
 uniform vec3 lightPos = vec3(0, 100, 0);
 
-void main(){
-	vec3 color1 = vec3(155/255f, 174/255f, 191/255f);
-	vec3 color2 = vec3(206/255f, 225/255f, 242/255f);
-	vec3 color3 = vec3(26/255f, 38/255f, 20/255f);
-	vec3 color4 = vec3(62/255f, 89/255f, 34/255f);
-	vec3 color5 = vec3(85/255f, 115/255f, 41/255f);
-
-	float new_scale = scale.y*(terr_max-terr_min)/5;
-	vec3 gradient_color = Gradient(pos.y,color2,color1,color3,color4,color5,new_scale,terr_min);
-
-	vec3 _norm = normalize(norm);
-	vec3 lightDir = normalize(lightPos - pos);
-	float diff = max(dot(_norm, lightDir), 0.0);
-	vec3 diffuse = diff * lightColor;
-
-	vec3 ambient = vec3(1,1,1)*0.5f;
-	vec3 objectColor = vec3(1, 1, 1);
-
-	color = (diffuse + ambient) * objectColor;
 vec3 Gradient(float position, vec3 array[MAX], float yscale, float size){
 	if(int(size) == 1){
 	return array[0];
@@ -75,5 +34,17 @@ vec3 Gradient(float position, vec3 array[MAX], float yscale, float size){
 }
 
 void main(){
-	color = Gradient(pos.y,colors, scale.y, size_of_array);
+	// Calculate diffuse lightning
+	vec3 _norm = normalize(norm);
+	vec3 lightDir = normalize(lightPos - pos);
+	float diff = max(dot(_norm, lightDir), 0.0);
+	vec3 diffuse = diff * lightColor;
+
+	vec3 ambient = vec3(1,1,1)*0.5f;
+	vec3 objectColor = vec3(1, 1, 1);
+
+	// Get the gradient color
+	vec3 gradient_color = Gradient(pos.y,colors, scale.y, size_of_array);
+
+	color = (diffuse + ambient) * gradient_color;
 }
