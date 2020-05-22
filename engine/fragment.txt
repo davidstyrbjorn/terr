@@ -1,12 +1,10 @@
 #version 330 core
-
+#define MAX 100
 uniform vec3 scale;
 
-uniform vec3 in_color1;
-uniform vec3 in_color2;
+uniform vec3 colors[MAX];
 
-uniform float terr_max;
-uniform float terr_min;
+uniform float size_of_array;
 
 in vec3 pos;
 in vec3 norm;
@@ -34,6 +32,7 @@ vec3 Gradient(float position, vec3 color1,vec3 color2,vec3 color3,vec3 color4,ve
 	 return color5;
 	}
 }
+*/
 
 uniform vec3 lightColor = vec3(1, 0, 0);
 float lightIntensity = 1.0;
@@ -58,4 +57,23 @@ void main(){
 	vec3 objectColor = vec3(1, 1, 1);
 
 	color = (diffuse + ambient) * objectColor;
+vec3 Gradient(float position, vec3 array[MAX], float yscale, float size){
+	if(int(size) == 1){
+	return array[0];
+	}
+	
+	for(int i = 0; i < size-1; i++)
+	{
+		if(position> yscale*(int(size)-1-i)/int(size))
+		{
+			float mPct = smoothstep(yscale*(int(size)-i)/int(size),yscale*(int(size)-1-i)/int(size), position);
+			return mix(array[i],array[i+1],mPct);	
+		}
+	}
+	
+	return array[int(size)-1];
+}
+
+void main(){
+	color = Gradient(pos.y,colors, scale.y, size_of_array);
 }
