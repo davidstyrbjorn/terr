@@ -44,8 +44,6 @@ public:
 		// Projection matrix
 		glm::mat4 proj = glm::perspective(glm::radians(60.0f), 4.0f / 3.0f, 0.001f, 2000.0f);
 
-
-
 		shader.Enable();
 		shader.UniformMat4x4("projection", proj);
 
@@ -62,9 +60,12 @@ public:
 
 	void OnUserRender() override {
 
+		shader.Enable();
 		// Send shit to the shader
 		shader.UniformVec3("scale", terrain.scale); // Temporary
 		shader.UniformMat4x4("view", camera.GetViewMatrix()); // Send the camera matrix
+		shader.UniformVec3("lightPos", lightPos);
+		shader.UniformVec3("lightColor", lightColor);
 
 		//Temporary colors
 		glm::vec3 colors[] = {
@@ -83,12 +84,13 @@ public:
 		shader.UniformFloat("terr_max", terrain.max);
 		shader.UniformFloat("terr_min", terrain.min);
 
-
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		//glCullFace(GL_FRONT_AND_BACK);
 		terrain.RenderTerrain();
-		//glCullFace(GL_FRONT_AND_BACK);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+		ImGui::Begin("Light");
+		ImGui::DragFloat3("Pos", &lightPos[0]);
+		ImGui::ColorEdit3("Light Color", &lightColor[0]);
+		ImGui::End();
+
 	}
 
 	void OnUserEvent(terr::Event event) override {
@@ -159,6 +161,8 @@ private:
 	terr::Camera camera;
 	//terr::Skybox skybox;
 	glm::vec3 pos;
+	glm::vec3 lightPos;
+	glm::vec3 lightColor;
 };
 
 int main() {

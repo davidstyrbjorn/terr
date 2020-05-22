@@ -3,6 +3,8 @@
 #define GLEW_STATIC
 #include<GL/glew.h>
 
+#include<glm/gtx/normal.hpp>
+
 #include<cmath>
 #include<time.h>
 #include<algorithm>
@@ -11,6 +13,10 @@
 #include"../include/core/noise/perlin_noise.h"
 
 #include"../include/imgui/imgui.h"
+
+static void NodeNormal(terr::NodeData& node, const terr::NodeData& node1, const terr::NodeData& node2) {
+	node.normal = glm::normalize(glm::triangleNormal(node.pos, node2.pos, node1.pos));
+}
 
 terr::Terrain::Terrain() :
 	size(0), scale(0), vbo(0), ibo(0), vao(0), index_count(0)
@@ -47,7 +53,9 @@ void terr::Terrain::ConstructTerrain(int _size, glm::vec<3, int> _scale, uint se
 	UpdateVertexBuffer();
 
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(NodeData), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(NodeData), (GLvoid*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(NodeData), (GLvoid*)offsetof(NodeData, normal));
 
 	//glBindBuffer(GL_ARRAY_BUFFER, 0);
 	//glBindVertexArray(0);
@@ -59,7 +67,9 @@ void terr::Terrain::RenderTerrain()
 	//glBindVertexArray(terrain.vao);
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	//glBindVertexArray(vao);
+	if(wireFrameOn) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, (const void*)0);
+	if(wireFrameOn) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	//glBindVertexArray(0);
 
@@ -85,6 +95,8 @@ void terr::Terrain::RenderTerrain()
 	ImGui::DragFloat("Frequency", &frequency, 0.1f, 0.001f);
 	// Z position
 	ImGui::DragFloat("Noise Z", &noise_z, 0.1f, 0.0f);
+	// Wireframe
+	ImGui::Checkbox("Wireframe", &wireFrameOn);
 
 	ImGui::Spacing();
 	ImGui::Separator();
@@ -222,6 +234,48 @@ void terr::Terrain::UpdateNodes()
 			starting_points.push_back(node.pos);
 		}
 	}
+
+	int offset1 = 1;
+	int offset2 = 4;
+	int counter1 = 0;
+
+	for (int i = 0; i < nodes.size(); i++) {
+		NodeData node1 = { {0,0,0}, {0,0,0} };
+		NodeData node2 = { {0,0,0}, {0,0,0} };
+
+		// We're on the last row
+		counter1++;
+		if (i >= size*size - size) {
+			std::cout << i << std::endl;
+			// Last node on the column
+			if (counter1 == size) {
+				counter1 = 0;
+				node1 = nodes[i - 1];
+				node2 = nodes[i - size];
+			}
+			else {
+				node2 = nodes[i + 1];
+				node1 = nodes[i - size];
+			}
+		}
+		else {
+			// Last node on the column
+			if (counter1 == size) {
+				counter1 = 0;
+				node2 = nodes[i - 1];
+				node1 = nodes[i + size];
+			}
+			else {
+				// We're not on the last row
+				node1 = nodes[i + 1];
+				node2 = nodes[i + size];
+			}
+		}
+
+		NodeNormal(nodes[i], node1, node2);
+
+	}
+
 	max = *std::max_element(list.begin(), list.end());
 	min = *std::min_element(list.begin(), list.end());
 }

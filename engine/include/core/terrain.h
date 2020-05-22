@@ -9,6 +9,7 @@ namespace terr {
 	
 	struct NodeData {
 		glm::vec3 pos;
+		glm::vec3 normal;
 	};
 
 	struct Vertex;
@@ -44,6 +45,7 @@ namespace terr {
 		float noise_z = 0.0f;
 		float max;
 		float min;
+		bool wireFrameOn = false;
 
 		// Terrain animation info
 		bool isAnimating = false;
