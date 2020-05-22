@@ -39,7 +39,7 @@ vec3 Gradient(float position, vec3 array[MAX], float yscale, float size){
 	return array[0];
 	}
 	
-	for(int i = 0; i < size; i++)
+	for(int i = 0; i < size-1; i++)
 	{
 		if(position> yscale*(int(size)-1-i)/int(size))
 		{
