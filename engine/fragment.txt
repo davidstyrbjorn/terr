@@ -1,12 +1,11 @@
 #version 330 core
-
+#define MAX 100
 uniform vec3 scale;
 
-uniform vec3 colors[5];
+uniform vec3 colors[MAX];
 
 uniform float size_of_array;
-uniform float terr_max;
-uniform float terr_min;
+
 
 in vec3 pos;
 out vec3 color;
@@ -35,25 +34,23 @@ vec3 Gradient(float position, vec3 color1,vec3 color2,vec3 color3,vec3 color4,ve
 }
 */
 
-vec3 Gradient(float position, vec3 array[5], float min, float max, float yscale, float size){
+vec3 Gradient(float position, vec3 array[MAX], float yscale, float size){
+	if(int(size) == 1){
+	return array[0];
+	}
 	
-	float interval = yscale*(max-min)/size;
-	for(int i = 0; i < int(size); i++)
+	for(int i = 0; i < size; i++)
 	{
-		if(position > ((size-i)*interval+min))
+		if(position> yscale*(int(size)-1-i)/int(size))
 		{
-			float mPct = smoothstep((size-i+1)*interval+min, (size-i)*interval+min, position);
-			return mix(array[i],array[i+1],mPct);
+			float mPct = smoothstep(yscale*(int(size)-i)/int(size),yscale*(int(size)-1-i)/int(size), position);
+			return mix(array[i],array[i+1],mPct);	
 		}
 	}
 	
-	
-	return array[int(size)];
-	
-	
+	return array[int(size)-1];
 }
-void main(){
 
-	color = Gradient(pos.y,colors,terr_min, terr_max, scale.y,size_of_array/15);
-	
-	}
+void main(){
+	color = Gradient(pos.y,colors, scale.y, size_of_array);
+}

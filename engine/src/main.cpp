@@ -68,19 +68,23 @@ public:
 
 		//Temporary colors
 		glm::vec3 colors[] = {
-		glm::vec3(206 / 255.0f, 225 / 255.0f, 242 / 255.0f),
-		glm::vec3(155 / 255.0f, 174 / 255.0f, 191 / 255.0f),
-		glm::vec3(26 / 255.0f, 38 / 255.0f, 20 / 255.0f),
-		glm::vec3(62 / 255.0f, 89 / 255.0f, 34 / 255.0f),
-		glm::vec3(85 / 255.0f, 115 / 255.0f, 41 / 255.0f)
+		glm::vec3(242/256.0f, 211/256.0f, 153 / 256.0f),
+		glm::vec3(89 / 256.0f,68 / 256.0f, 49 / 256.0f),
+		glm::vec3(166 / 256.0f,87 / 256.0f, 41 / 256.0f),
+		glm::vec3(192 / 256.0f,222 / 256.0f, 136 / 256.0f),
+		glm::vec3(92 / 256.0f,163 / 256.0f, 111 / 256.0f),
+		glm::vec3(38 / 256.0f,91 / 256.0f,64 / 256.0f),
+		glm::vec3(15 / 256.0f,62 / 256.0f,57 / 256.0f),
+		glm::vec3(13 / 256.0f,33 / 256.0f,39 / 256.0f)
 		};
+		int array_size = 8;// Behöver ändras beroende på storlek av array
+							//Kan vi få in denna i uniformvec3Array?
 		
 
 		//Send colors to fragment
-		shader.UniformFloat("terr_max", terrain.max);
-		shader.UniformFloat("terr_min", terrain.min);
+		
 		shader.UniformVec3Array("colors",colors);
-		shader.UniformFloat("size_of_array", sizeof(colors));
+		shader.UniformFloat("size_of_array", array_size); //sizeof() returns byte size of vec3 array
 
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		//glCullFace(GL_FRONT_AND_BACK);
