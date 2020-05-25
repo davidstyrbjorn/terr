@@ -15,7 +15,7 @@ namespace terr {
 	struct Vertex;
 
 	class Terrain {
-	private:
+	public:
 		// Utility methods
 		void UpdateIndicesBuffer(); // Uses nodes member as data
 		void UpdateVertexBuffer(); // Uses nodes member as data

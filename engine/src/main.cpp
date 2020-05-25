@@ -39,10 +39,10 @@ public:
 		shader.CreateShader("vertex.txt", "fragment.txt");
 
 		//skybox.CreateSkybox();
-		terrain.ConstructTerrain(32, glm::ivec3(10, 50, 10), 322);
+		terrain.ConstructTerrain(32, glm::ivec3(3, 50, 3), 322);
 
 		// Projection matrix
-		glm::mat4 proj = glm::perspective(glm::radians(60.0f), 4.0f / 3.0f, 0.001f, 2000.0f);
+		glm::mat4 proj = glm::perspective(glm::radians(90.0f), 4.0f / 3.0f, 0.001f, 2000.0f);
 
 		shader.Enable();
 		shader.UniformMat4x4("projection", proj);
@@ -67,7 +67,7 @@ public:
 		shader.UniformVec3("lightPos", lightPos);
 		shader.UniformVec3("lightColor", lightColor);
 
-		//Send colors to fragment
+		// Send colors to fragment
 		
 		shader.UniformVec3Array("colors", &terrain.gradient_colors[0]);
 		shader.UniformFloat("size_of_array", terrain.gradient_color_count); //sizeof() returns byte size of vec3 array
@@ -79,6 +79,87 @@ public:
 		ImGui::ColorEdit3("Light Color", &lightColor[0]);
 		ImGui::End();
 
+		ImGui::Begin("Preset Terrain Data");
+
+		if (ImGui::Button("Grasslands")) {
+			MakeGrasslands();
+		}
+		if (ImGui::Button("Snowy Mountains")) {
+			MakeSnowyMountains();
+		}
+		if (ImGui::Button("Desert")) {
+			MakeDesert();
+		}
+
+		ImGui::End();
+
+	}
+
+	void MakeGrasslands() {
+		terrain.seed = rand();
+
+		terrain.scale = glm::vec3(3, 90, 3);
+		terrain.size = 256;
+		terrain.frequency = 10;
+		
+		terrain.gradient_color_count = 3;
+		terrain.gradient_colors = {
+			glm::vec3(0,255,0)/255.0f,
+			glm::vec3(30,150,40)/255.0f,
+			glm::vec3(0,60,255)/255.0f
+		};
+
+		lightPos = glm::vec3(20, 140, 180);
+		lightColor = glm::vec3(255, 255, 255) / 255.0f;
+
+		terrain.UpdateNodes();
+		terrain.UpdateIndicesBuffer();
+		terrain.UpdateVertexBuffer();
+	}
+
+	void MakeSnowyMountains() {
+		terrain.seed = rand();
+
+		terrain.scale = glm::vec3(3, 200, 3);
+		terrain.size = 256;
+		terrain.frequency = 7;
+
+		terrain.gradient_color_count = 4;
+		terrain.gradient_colors = {
+			glm::vec3(255,255,255) / 255.0f,
+			glm::vec3(175,175,175) / 255.0f,
+			glm::vec3(113,113,113) / 255.0f,
+			glm::vec3(0,0,185) / 255.0f
+		};
+
+		lightPos = glm::vec3(21, 600, 180);
+		lightColor = glm::vec3(255, 255, 255) / 255.0f;
+
+		terrain.UpdateNodes();
+		terrain.UpdateIndicesBuffer();
+		terrain.UpdateVertexBuffer();
+	}
+
+	void MakeDesert() {
+		terrain.seed = rand();
+
+		terrain.scale = glm::vec3(3, 100, 3);
+		terrain.size = 128;
+		terrain.frequency = 3;
+
+		terrain.gradient_color_count = 3;
+		terrain.gradient_colors = {
+			glm::vec3(209,143,0) / 255.0f,
+			glm::vec3(204,172,40) / 255.0f,
+			glm::vec3(111,128,63) / 255.0f,
+		};
+
+		lightPos = glm::vec3(20, 463, 180);
+		lightColor = glm::vec3(255, 157, 0) / 255.0f;
+
+		terrain.UpdateNodes();
+		terrain.UpdateIndicesBuffer();
+		terrain.UpdateVertexBuffer();
 	}
 
 	void OnUserEvent(terr::Event event) override {
