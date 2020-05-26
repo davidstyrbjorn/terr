@@ -102,11 +102,15 @@ public:
 		terrain.size = 256;
 		terrain.frequency = 10;
 		
-		terrain.gradient_color_count = 3;
+		terrain.gradient_color_count = 6;
 		terrain.gradient_colors = {
-			glm::vec3(0,255,0)/255.0f,
-			glm::vec3(30,150,40)/255.0f,
-			glm::vec3(0,60,255)/255.0f
+			glm::vec3(0, 226, 0) / 255.0f,
+			glm::vec3(21, 134, 0) / 255.0f,
+			glm::vec3(0, 115, 0) / 255.0f,
+			glm::vec3(29, 88, 15) / 255.0f,
+			glm::vec3(35, 57, 81) / 255.0f,
+			glm::vec3(7, 24, 40)/255.0f
+			
 		};
 
 		lightPos = glm::vec3(20, 140, 180);
@@ -124,12 +128,13 @@ public:
 		terrain.size = 256;
 		terrain.frequency = 7;
 
-		terrain.gradient_color_count = 4;
+		terrain.gradient_color_count = 5;
 		terrain.gradient_colors = {
-			glm::vec3(255,255,255) / 255.0f,
-			glm::vec3(175,175,175) / 255.0f,
-			glm::vec3(113,113,113) / 255.0f,
-			glm::vec3(0,0,185) / 255.0f
+			glm::vec3(210, 214, 217) / 255.0f,
+			glm::vec3(210, 214, 217) / 255.0f,
+			glm::vec3(209, 219, 189) / 255.0f,
+			glm::vec3(44, 72, 89) / 255.0f,
+			glm::vec3(1, 17, 38) / 255.0f
 		};
 
 		lightPos = glm::vec3(21, 600, 180);
@@ -149,9 +154,9 @@ public:
 
 		terrain.gradient_color_count = 3;
 		terrain.gradient_colors = {
-			glm::vec3(209,143,0) / 255.0f,
-			glm::vec3(204,172,40) / 255.0f,
-			glm::vec3(111,128,63) / 255.0f,
+			glm::vec3(242, 172, 87) / 255.0f,
+			glm::vec3(242, 206, 174) / 255.0f,
+			glm::vec3(140, 86, 55) / 255.0f,
 		};
 
 		lightPos = glm::vec3(20, 463, 180);
